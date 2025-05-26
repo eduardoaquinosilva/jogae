@@ -1,3 +1,14 @@
-from django.shortcuts import render
+from django.views import generic
 
-# Create your views here.
+from .models import Game
+
+class IndexView(generic.ListView):
+    template_name = "games/index.html"
+    context_object_name = "popular_games"
+
+    def get_queryset(self):
+        return Game.objects.order_by("rating")[:10]
+
+class DetailView(generic.DetailView):
+    model = Game
+    template_name = "games/detail.html"

@@ -1,0 +1,7 @@
+<h1>Jogos massas</h1>
+
+<ul>
+    {% for game in popular_games %}
+    <li><a href="{% url 'games:detail' game.id %}">{{game.title}} - <small>{{game.description}}</small></a></li>
+    {% endfor %}
+</ul>
