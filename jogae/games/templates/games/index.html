@@ -1,35 +1,40 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Jogos</title>
-  <link rel="stylesheet" href="{% static 'css/index.css' %}">
-</head>
-<body>
-  <div class="games-container">
-    <div class="games-container-title">
-      <h1>Jogos</h1>
-    </div>
-    <div class="games">
-      {% for game in popular_games %}
-        <div class="game-single">
-          <div class="game-single__image">
-            <img src="https://upload.wikimedia.org/wikipedia/pt/e/ee/Terraria_capa.png" alt="{{ game.title }} cover" class="game-single__img">
-          </div>
-          <div class="game-single__info">
-            <div class="game-single__td">
-              <h2 class="game-single__title">{{ game.title }}</h2>
-              <p class="game-single__desc">{{ game.description }}</p>
+
+{% block title %}Jogos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="body"> 
+    <div class="games-container">
+      <div class="games-container-title">
+        <h1>Jogos</h1>
+      </div>
+      <div class="games">
+        {% for game in popular_games %}
+          <div class="game-single">
+            <div class="game-single__image">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/pt/e/ee/Terraria_capa.png"
+                alt="{{ game.title }} cover"
+                class="game-single__img">
             </div>
-            <div class="game-single__buttons">
-              <a href="{% url 'games:detail' game.id %}" class="btn">Visualizar</a>
-              <a href="{% url 'games:detail' game.id %}" class="btn">Salvar</a>
+            <div class="game-single__info">
+              <div class="game-single__td">
+                <h2 class="game-single__title">{{ game.title }}</h2>
+                <p class="game-single__desc">{{ game.description }}</p>
+              </div>
+              <div class="game-single__buttons">
+                <a href="{% url 'games:detail' game.id %}" class="btn">Visualizar</a>
+                <a href="{% url 'games:detail' game.id %}" class="btn">Salvar</a>
+              </div>
             </div>
           </div>
-        </div>
-      {% endfor %}
+        {% endfor %}
+      </div>
     </div>
   </div>
-</body>
-</html>
+{% endblock %}

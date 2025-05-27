@@ -9,15 +9,11 @@ html, body {
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
   background-color: #986a4c;
   background-image: url("../img/terraria.gif");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  padding: 2rem 0;
   color: #fff;
 }
 
@@ -29,6 +25,7 @@ body {
   padding: 2rem;
   backdrop-filter: blur(8px);
   box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  margin: 0 auto; 
 }
 
 .games-container-title {
