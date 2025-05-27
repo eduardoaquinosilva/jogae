@@ -1,7 +1,19 @@
-<h1>Jogos massas</h1>
+<head>
+    <link rel="stylesheet" href="../../static/css/index.css">
+</head>
+<body>
+  <div class="games-container">
+    <h1>Jogos</h1>
 
-<ul>
-    {% for game in popular_games %}
-    <li><a href="{% url 'games:detail' game.id %}">{{game.title}} - <small>{{game.description}}</small></a></li>
-    {% endfor %}
-</ul>
+    <ul>
+      {% for game in popular_games %}
+      <li>
+        <a href="{% url 'games:detail' game.id %}">
+          <span class="title">{{ game.title }}</span>
+          <small class="desc">{{ game.description }}</small>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</body>
