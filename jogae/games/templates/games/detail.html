@@ -1,11 +1,15 @@
 <head>
     <link rel="stylesheet" href="../../static/css/detail.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
 </head>
 <body>
   <div class="detail-container">
     <h1>{{ game.title }}</h1>
     <p class="description">{{ game.description }}</p>
     <p class="rating">Rating: <span>{{ game.rating }}</span></p>
-    <a class="back-link" href="{% url 'games:index' %}">← Voltar para jogos</a>
+    <a class="back-link" href="{% url 'home' %}">
+      <i class="fa-solid fa-arrow-left"></i>Voltar para jogos
+    </a>
   </div>
 </body>

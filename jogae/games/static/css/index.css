@@ -12,57 +12,114 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  background-color: #1a0057;
+  background-color: #986a4c;
+  background-image: url("../img/terraria.gif");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   padding: 2rem 0;
   color: #fff;
 }
 
 .games-container {
   width: 100%;
-  max-width: 35rem;
-  background-color: rgba(255,255,255,0.1);
+  max-width: 90%;
+  background-color: rgba(26, 78, 102, 0.55);
   border-radius: 12px;
   padding: 2rem;
   backdrop-filter: blur(8px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
 }
 
-.games-container h1 {
+.games-container-title {
   text-align: center;
-  font-size: 1.8rem;
+  font-size: 1.2rem;
   margin-bottom: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.4rem;
+  border-radius: 3rem;
 }
 
 .games-container ul {
   list-style: none;
 }
 
-.games-container li + li {
-  margin-top: 1rem;
+.games {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
 }
 
-.games-container a {
-  display: block;
-  padding: 0.75rem 1rem;
-  background-color: rgba(255,255,255,0.05);
-  border-radius: 6px;
+.game-single {
+  display: flex;
+  flex: 1;
+  min-height: 10rem;
+  gap: 1.5rem;
+  background-color: rgba(91, 158, 173, 0.8);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  align-items: flex-start;
+}
+
+.game-single__img {
+  width: 20rem;
+  height: 20rem;
+  align-self: center;
+  border-radius: 0.5rem;
+  object-fit: fill;
+}
+
+.game-single__info {
+  flex: 1;
+  height: 100%;
+  gap: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.game-single__td {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 0.6rem 2rem 2rem;
+  gap: 2rem;
+}
+
+.game-single__title {
+  padding-top: 0.2rem;
+  font-size: 2rem;
+  text-align: left;
+}
+
+.game-single__desc {
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.3rem;
+  height: 11rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.game-single__buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.game-single__buttons .btn {
+  padding: 0.6rem 1rem;
+  background-color: #2c7a7b;
+  border-radius: 0.3rem;
   text-decoration: none;
-  color: #ffffff;
-  transition: background-color 0.2s;
-}
-
-.games-container a:hover {
-  background-color: rgba(255,255,255,0.15);
-}
-
-.games-container .title {
+  color: white;
   font-weight: 600;
-  display: block;
+  text-align: center;
 }
 
-.games-container .desc {
-  display: block;
-  margin-top: 0.3rem;
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.7);
+.game-single__buttons .btn:hover {
+  background-color: #285e61;
 }
