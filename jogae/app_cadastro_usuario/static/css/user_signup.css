@@ -1,0 +1,111 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1a0057;
+  background-position: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 35rem;
+  padding: 2.5rem 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.container h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  color: #333333;
+  text-align: center;
+}
+
+.container a.signin-link {
+  display: block;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #e67e22;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.container a.signin-link:hover {
+  text-decoration: underline;
+}
+
+.container ul {
+  color: #c0392b;
+  background-color: #f9e6e6;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  list-style: none;
+}
+
+.container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.container form p {
+  margin: 0 0 1rem;
+}
+
+.container form label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+  color: #555555;
+  font-size: 0.9rem;
+}
+
+.container form input[type="text"],
+.container form input[type="email"],
+.container form input[type="password"],
+.container form select {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  background-color: #fafafa;
+  font-size: 0.95rem;
+  color: #333333;
+  transition: border-color 0.2s;
+}
+
+.container form input:focus,
+.container form select:focus {
+  outline: none;
+  border-color: #4c327e;
+  background-color: #fff;
+}
+
+.container form button {
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #4c327e;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.container form button:hover {
+  background-color: #301f4e;
+}
