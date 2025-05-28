@@ -12,3 +12,13 @@ class IndexView(generic.ListView):
 class DetailView(generic.DetailView):
     model = Game
     template_name = "games/detail.html"
+
+
+class CreateView(generic.CreateView):
+    model = Game
+    fields = [
+        'title',
+        'description',
+        'picture'
+    ]
+    template_name = "games/create.html"

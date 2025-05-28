@@ -1,4 +1,5 @@
 import uuid
+from django.urls import reverse
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -13,8 +14,10 @@ class Game(models.Model):
         ],
         default=2.5
     )
+    picture = models.ImageField(upload_to="games/", null=True, blank=True)
 
-    # TODO: add game image
+    def get_absolute_url(self):
+        return reverse("games:detail", kwargs={"pk": self.id})
 
     def __str__(self):
         return self.title
