@@ -22,3 +22,7 @@ class UsuarioForms(forms.ModelForm):
         if not re.match(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$', password):
             raise forms.ValidationError("A senha deve ter pelo menos 8 caracteres, com uma letra, um número e um caractere especial.")
         return password
+
+class LoginForms(forms.Form):
+    username = forms.CharField(label='Usuário', max_length=150)
+    password = forms.CharField(label='Senha', widget=forms.PasswordInput, strip=False)

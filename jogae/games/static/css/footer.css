@@ -9,6 +9,10 @@
   align-items: center;
 }
 
+.footer p {
+  color: white;
+}
+
 footer {
   margin-top: 2rem!important;
 }
