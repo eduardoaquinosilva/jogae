@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <title>{% block title %}JOGAe{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    {% include 'partials/navbar.html' %}
+
+    <main class="content">
+      {% block content %}
+      {% endblock %}
+    </main>
+
+    {% include 'partials/footer.html' %}
+  </body>
+</html>

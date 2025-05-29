@@ -1,0 +1,11 @@
+{% load static %}
+<div class="navbar">
+  <nav class="navbar-items">
+    <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}"></a>
+    <a class="navbar-link active" href="{% url 'home' %}">Página Inicial</a>
+    <a class="navbar-link" href="#">Biblioteca</a>
+  </nav>
+  <nav class="navbar-items navbar-items-right">
+    <a class="navbar-link" href="{% url 'login' %}">Login/Cadastrar-se</a>
+  </nav>
+</div>

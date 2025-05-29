@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Jogos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <a href="{% url 'games:create' %}">Criar jogo</a>
+  <div class="games-container">
+    <div class="games-container-title">
+      <h1>Jogos</h1>
+    </div>
+    <div class="games">
+      {% for game in popular_games %}
+      <div class="game-single">
+        <div class="game-single__image">
+          {% if game.picture %}
+          <img src="{{game.picture.url}}" alt="{{ game.title }} cover" class="game-single__img">
+          {% else %}
+          <p>Sem foto :(</p>
+          {% endif %}
+        </div>
+        <div class="game-single__info">
+          <div class="game-single__td">
+            <h2 class="game-single__title">{{ game.title }}</h2>
+            <p class="game-single__desc">{{ game.description }}</p>
+          </div>
+          <div class="game-single__buttons">
+            <a href="{% url 'games:detail' game.id %}" class="btn">Visualizar</a>
+            <a href="{% url 'games:detail' game.id %}" class="btn">Salvar</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
