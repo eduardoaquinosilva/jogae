@@ -1,18 +1,19 @@
 from django import forms 
-from .models import Usuario
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
 import re
 
-class UsuarioForms(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
+User = get_user_model()
 
-    class Meta:
-        model = Usuario
-        fields = ['username','email','password']
+class UsuarioForms(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = UserCreationForm.Meta.fields + ('email',)
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
         
-        if(3 > len(username)):
+        if(username and 3 > len(username)):
             raise forms.ValidationError("Nome de usuário precisa ter ao menos 3 caracteres")
         return username
     
@@ -22,7 +23,3 @@ class UsuarioForms(forms.ModelForm):
         if not re.match(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$', password):
             raise forms.ValidationError("A senha deve ter pelo menos 8 caracteres, com uma letra, um número e um caractere especial.")
         return password
-
-class LoginForms(forms.Form):
-    username = forms.CharField(label='Usuário', max_length=150)
-    password = forms.CharField(label='Senha', widget=forms.PasswordInput, strip=False)

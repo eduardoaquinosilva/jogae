@@ -1,36 +1,15 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
-from .forms import UsuarioForms, LoginForms
+from django.contrib.auth import login
+from django.views.generic import CreateView
+from django.urls import reverse_lazy
+from .forms import UsuarioForms
 
-# Create your views here.
-def login_view(request):
-    if(request.method == 'POST'):
-        form = LoginForms(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                auth_login(request, user)
-                return redirect('home')
-            else:
-                form.add_error(None, 'Usuário ou senha inválidos.')
-    else:
-        form = LoginForms()
-    return render(request, 'usuarios/login.html', {'form': form})
+class SignUpView(CreateView):
+    form_class = UsuarioForms
+    template_name = 'registration/cadastro.html'
+    success_url = reverse_lazy('games:list') # TODO: redirecionar para perfil / última página visitada
 
-def registrar_usuario(request):
-
-
-    if(request.method == 'POST'):
-        form = UsuarioForms(request.POST)
-
-        if form.is_valid():
-            form.save()
-            return redirect('pagina_sucesso')
-    else:
-        form = UsuarioForms()
-    return render(request, 'usuarios/formulario.html', {'form': form})
-
-def pagina_sucesso(request):
-    return render(request, 'usuarios/sucesso.html')
+    # This will be called when valid form data has been posted
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return super().form_valid(form)
