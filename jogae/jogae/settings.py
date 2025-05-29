@@ -131,3 +131,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom user class
 AUTH_USER_MODEL='app_cadastro_usuario.User'
+
+# Page to redirect after login / logout
+LOGIN_REDIRECT_URL= '/'
+LOGOUT_REDIRECT_URL= '/'
