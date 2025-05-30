@@ -8,5 +8,5 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', IndexView.as_view(), name='home'),
     path('games/', include("games.urls")),
-    path('auth/', include("app_cadastro_usuario.urls"))
+    path('accounts/', include("app_cadastro_usuario.urls"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
