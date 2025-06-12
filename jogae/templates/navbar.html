@@ -1,0 +1,19 @@
+{% load static %}
+<div class="navbar">
+  <nav class="navbar-items">
+    <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}"></a>
+    <a class="navbar-link active" href="{% url 'home' %}">Página Inicial</a>
+    <a class="navbar-link" href="#">Biblioteca</a>
+  </nav>
+  <nav class="navbar-items navbar-items-right">
+    {% if request.user.is_authenticated %}
+    <form action="{% url 'auth:logout' %}" method="POST">
+      {% csrf_token %}
+      <input type="submit" value="Logout :(">
+    </form>
+    {% else %}
+    <a class="navbar-link" href="{% url 'auth:login' %}">Login</a>
+    <a class="navbar-link" href="{% url 'auth:signup' %}">Cadastrar-se</a>
+    {% endif %}
+  </nav>
+</div>
