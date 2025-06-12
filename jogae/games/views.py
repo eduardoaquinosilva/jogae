@@ -1,4 +1,5 @@
 from django.views import generic
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Game
 
@@ -14,7 +15,7 @@ class DetailView(generic.DetailView):
     template_name = "games/detail.html"
 
 
-class CreateView(generic.CreateView):
+class CreateView(LoginRequiredMixin, generic.CreateView):
     model = Game
     fields = [
         'title',
