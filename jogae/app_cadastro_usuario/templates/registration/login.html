@@ -4,13 +4,13 @@
 {% block title %}Jogos{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/login.css' %}">
+<link rel="stylesheet" href="{% static 'css/app_cadastro_usuario/login.css' %}">
 {% endblock %}
 
 {% block content %}
   <div class="container">
       <h2>Login de Usuário</h2>
-
+      
       <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

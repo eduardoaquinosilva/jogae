@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app_cadastro_usuario',
+    'app_cadastro_usuario.apps.AppCadastroUsuarioConfig',
     'games.apps.GamesConfig'
 ]
 
@@ -56,7 +56,9 @@ ROOT_URLCONF = 'jogae.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,6 +120,11 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+]
+
+
 # Media Files (User uploaded)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -126,3 +133,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Custom user class
+AUTH_USER_MODEL='app_cadastro_usuario.User'
+
+# Page to redirect after login / logout
+LOGIN_REDIRECT_URL= '/'
+LOGOUT_REDIRECT_URL= '/'

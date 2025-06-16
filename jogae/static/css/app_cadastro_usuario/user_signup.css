@@ -10,11 +10,7 @@ html, body {
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-color: #1a0057;
-  background-position: center;
 }
 
 .container {
