@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Jogos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/app_cadastro_usuario/user_signup.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+{% for favoriteGame in favorites.games.all %}
+<h1>{{favoriteGame.title}}</h1>
+{% endfor %}
+
+{% endblock content %}
