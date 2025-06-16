@@ -7,7 +7,6 @@ from games.views import IndexView
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('cadastro_usuario/', include('app_cadastro_usuario.urls')),
-    path('login/', views.login_view, name='login'),
     path('', IndexView.as_view(), name='home'),
     path('games/', include("games.urls")),
     path('accounts/', include("app_cadastro_usuario.urls"))
