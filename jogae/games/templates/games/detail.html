@@ -1,15 +1,33 @@
-<head>
-    <link rel="stylesheet" href="% static 'css/games/detail.css' %">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-</head>
-</head>
-<body>
-  <div class="detail-container">
-    <h1>{{ game.title }}</h1>
-    <p class="description">{{ game.description }}</p>
-    <p class="rating">Rating: <span>{{ game.rating }}</span></p>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cadastrar Jogo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/games/detail.css'%}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+  <div class="container">
+    <div class="title">
+      <h1>{{ game.title }}</h1>
+    </div>
+    <div class="game-img">
+      {% if game.picture %}
+      <img src="{{game.picture.url}}" alt="{{ game.title }} cover" class="game-img">
+      {% else %}
+      <p>Sem foto :(</p>
+      {% endif %}
+    </div>
+    <div class="content-container">
+      <p class="description">{{ game.description }}</p>
+      <p class="rating">Rating: <span>{{ game.rating }}</span></p>
+    </div>
     <a class="back-link" href="{% url 'home' %}">
-      <i class="fa-solid fa-arrow-left"></i>Voltar para jogos
+      <i class="fa-solid fa-chevron-left"></i>Voltar para jogos
     </a>
   </div>
-</body>
+</div>
+{% endblock %}

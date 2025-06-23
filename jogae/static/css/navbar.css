@@ -38,6 +38,22 @@
   margin-left: auto;
 }
 
+.navbar-button {
+  background-color: rgba(26, 78, 102, 0.753);
+  border: 0;
+  border-radius: 0.6rem;
+  border-color: rgba(67, 163, 207, 0.178);
+  padding: 0.6rem;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1rem;
+  color: white;
+}
+
+.navbar-button:hover {
+  background-color: rgba(174, 199, 211, 0.178);
+}
+
 .navbar-link {
   padding: 0.6rem;
   border-radius: 0.6rem;

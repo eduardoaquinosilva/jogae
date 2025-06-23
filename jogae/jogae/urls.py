@@ -9,5 +9,6 @@ urlpatterns = [
     path('cadastro_usuario/', include('app_cadastro_usuario.urls')),
     path('', IndexView.as_view(), name='home'),
     path('games/', include("games.urls")),
-    path('accounts/', include("app_cadastro_usuario.urls"))
+    path('accounts/', include("app_cadastro_usuario.urls")),
+    path('biblioteca/', include("app_biblioteca.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

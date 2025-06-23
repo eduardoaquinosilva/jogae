@@ -9,12 +9,16 @@
 
 {% block content %}
   <div class="container">
-      <h2>Login de Usuário</h2>
-      
+    <h2>Login de Usuário</h2>
+    
+    <div class="form">
       <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Logar-se</button>
+        <div class="submit-button">
+          <button type="submit">Logar</button>
+        </div>
       </form>
+    </div>
   </div>
 {% endblock %}

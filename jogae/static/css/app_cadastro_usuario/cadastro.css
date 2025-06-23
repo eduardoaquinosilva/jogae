@@ -11,7 +11,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background-color: rgba(91, 158, 173, 0.8);
+  background-color: rgba(91, 158, 173, 0.9);
   border: 0.1rem solid #cccccc;
   border-radius: 0.5rem;
   padding: 1.5rem;
@@ -28,8 +28,38 @@ body {
   flex: 1;
 }
 
+.container ul {
+  border: 0.1rem solid #cccccc;
+  background-color: rgba(70, 120, 131, 0.938);
+  border-radius: 0.2rem;
+  padding: 1.4rem;
+  margin: 1rem 0rem;
+}
+.container ul li{
+  color: white;
+  font-size: 0.9rem;
+  margin: 0.2rem 0 0.8rem;
+}
+
+#id_password1_helptext{
+  display: none;
+}
+
+span.helptext,
+small.helptext{
+  border: 0.1rem solid #cccccc;
+  background-color: rgba(70, 120, 131, 0.938);
+  color: white;
+  border-radius: 0.2rem;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  display: block;
+  margin: 1rem 0 0.8rem;
+}
+
 .container form input[type="text"],
-.container form input[type="password"]{
+.container form input[type="password"],
+.container form input[type="email"]{
   width: 100%;
   margin: 0.4rem 0rem;
   padding: 0.65rem 0.8rem;
@@ -56,8 +86,7 @@ body {
   color: white;
   font-weight: 600;
   margin-top: 0.4rem;
-  font-size: 1rem;
-  width: 100%; 
+  font-size: 1rem; 
 }
 
 .container button[type="submit"]:hover{

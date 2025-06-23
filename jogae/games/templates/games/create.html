@@ -4,13 +4,17 @@
 {% block title %}Cadastrar Jogo{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/games/index.css' %}">
+<link rel="stylesheet" href="{% static 'css/games/create.css' %}">
 {% endblock %}
 
 {% block content %}
-<form action="{% url 'games:create' %}" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Criar">
-</form>
+<div class="container">
+    <form action="{% url 'games:create' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="submit-button">
+            <input type="submit" value="Criar">
+        </div>
+    </form>
+</div>
 {% endblock %}
