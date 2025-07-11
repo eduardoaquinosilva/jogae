@@ -125,6 +125,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
+LOGIN_URL = '/login/'
 
 # Media Files (User uploaded)
 MEDIA_URL = '/media/'
