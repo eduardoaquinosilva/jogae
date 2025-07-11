@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'app_cadastro_usuario.apps.AppCadastroUsuarioConfig',
     'games.apps.GamesConfig',
     'app_biblioteca.apps.AppBibliotecaConfig',
+    'app_profile.apps.AppProfileConfig',
 ]
 
 MIDDLEWARE = [

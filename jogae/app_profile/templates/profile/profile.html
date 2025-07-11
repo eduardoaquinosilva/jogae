@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Perfil de {{ user_profile.user.username }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/app_profile/profile.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <img src="{% static 'img/default_profile.png' %}" alt="Foto de Perfil" class="profile-picture">
+        <h1>{{ user_profile.user.username }}</h1>
+        <p class="profile-email">{{ user_profile.user.email }}</p>
+    </div>
+
+    <div class="profile-details">
+        <h2>Detalhes do Perfil</h2>
+        <p><strong>Nome Completo:</strong> {{ user_profile.full_name|default:"Não informado" }}</p>
+        <p><strong>Data de Nascimento:</strong> {{ user_profile.birth_date|default:"Não informada" }}</p>
+        <p><strong>Bio:</strong> {{ user_profile.bio|default:"Nenhuma biografia informada." }}</p>
+    </div>
+
+    <div class="profile-actions">
+        <a href="{% url 'profile:editProfile' %}" class="btn btn-primary">Editar Perfil</a>
+        <a href="{% url 'profile:myGames' %}" class="btn btn-secondary">Meus Jogos</a>
+        <a href="{% url 'profile:friends' %}" class="btn btn-secondary">Amigos</a>
+    </div>
+</div>
+{% endblock %}
