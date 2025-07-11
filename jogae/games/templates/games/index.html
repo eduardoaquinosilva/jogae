@@ -30,7 +30,7 @@
           </div>
           <div class="game-single__buttons">
             <a href="{% url 'games:detail' game.id %}" class="btn">Visualizar</a>
-            <a href="{% url 'games:detail' game.id %}" class="btn">Salvar</a>
+            <a href="{% url 'biblioteca:saveGame' game.id %}" class="btn">Salvar</a>
           </div>
         </div>
       </div>

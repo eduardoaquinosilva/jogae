@@ -125,7 +125,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
-LOGIN_URL = '/login/'
+LOGIN_URL = '/cadastro_usuario/login/'
 
 # Media Files (User uploaded)
 MEDIA_URL = '/media/'

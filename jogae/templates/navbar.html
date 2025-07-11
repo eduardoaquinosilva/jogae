@@ -5,7 +5,7 @@
     <a class="navbar-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}" href="{% url 'home' %}">
       Página Inicial
     </a>
-    <a class="navbar-link{% if request.resolver_match.url_name == 'biblioteca' %} active{% endif %}" href="{% url 'biblioteca' %}">
+    <a class="navbar-link{% if request.resolver_match.url_name == 'biblioteca' %} active{% endif %}" href="{% url 'biblioteca:homeBiblioteca' %}">
       Biblioteca
     </a>
     {% if request.user.is_authenticated%}
