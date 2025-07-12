@@ -1,1 +1,65 @@
-<h1>teste</h1>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meus Amigos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/app_profile/profile.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<div class="profile-container">
+    <a href="{% url 'profile:profile' %}">Voltar</a>
+
+
+    <h2>Meus Amigos:</h2>
+    
+    {% if friends %}
+
+    {% for friend in friends %}
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <img src="{% static 'img/default_profile.png' %}" alt="Foto de Perfil" class="profile-picture">
+            <h1>{{ friend.username }}</h1>
+        </div>
+
+        <div class="profile-details">
+            <h2>Bio:</h2>
+            <p>{{ friend.bio|default:"Nenhuma biografia informada."|linebreaksbr }}</p>
+        </div>
+
+    <H2>Jogos feitos por @{{ friend.username }}</H2>
+
+    <div class="game-single">
+        {% for game in friend.game_set.all %}
+        <div class="game-single__image">
+            {% if game.picture %}
+            <img src="{{game.picture.url}}" alt="{{ game.title }} cover" class="game-single__img">
+            {% else %}
+            <p>Sem foto :(</p>
+            {% endif %}
+        </div>
+            <div class="game-single__info">
+            <div class="game-single__td">
+                <h2 class="game-single__title">{{ game.title }}</h2>
+                <p class="game-single__desc">{{ game.description }}</p>
+            </div>
+            <div class="game-single__buttons">
+                <a href="{% url 'games:detail' game.id %}" class="btn">Visualizar</a>
+            </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% endfor %}
+    
+    {% else %}
+    <p>Sem amigos</p>
+    
+    {% endif %}
+
+</div>
+{% endblock %}

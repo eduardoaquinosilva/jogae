@@ -1,1 +1,24 @@
-<h1>teste</h1>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/app_profile/profile.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<div class="profile-container">
+    <a href="{% url 'profile:profile' %}">Voltar</a>
+
+
+    <h2>Editar Perfil</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>
+    </form>
+    
+</div>
+{% endblock %}

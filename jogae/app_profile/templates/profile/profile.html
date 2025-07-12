@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Perfil de {{ user_profile.user.username }}{% endblock %}
+{% block title %}Perfil de {{ user.username }}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/app_profile/profile.css' %}">
@@ -12,15 +12,13 @@
 <div class="profile-container">
     <div class="profile-header">
         <img src="{% static 'img/default_profile.png' %}" alt="Foto de Perfil" class="profile-picture">
-        <h1>{{ user_profile.user.username }}</h1>
-        <p class="profile-email">{{ user_profile.user.email }}</p>
+        <h1>{{ user.username }}</h1>
+        <p class="profile-email">{{ user.email }}</p>
     </div>
 
     <div class="profile-details">
-        <h2>Detalhes do Perfil</h2>
-        <p><strong>Nome Completo:</strong> {{ user_profile.full_name|default:"Não informado" }}</p>
-        <p><strong>Data de Nascimento:</strong> {{ user_profile.birth_date|default:"Não informada" }}</p>
-        <p><strong>Bio:</strong> {{ user_profile.bio|default:"Nenhuma biografia informada." }}</p>
+        <h2>Bio:</h2>
+        <p>{{ user.bio|default:"Nenhuma biografia informada."|linebreaksbr }}</p>
     </div>
 
     <div class="profile-actions">
