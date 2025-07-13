@@ -27,11 +27,12 @@
             <a href="{% url 'profile:friends' %}" class="btn btn-secondary">Amigos</a>
             <a href="{% url 'profile:solicitacoes' %}" class="btn btn-secondary">Solicitações de Amizade</a>
         {% else %}
-            {% if friendship_status == 'NOT_FRIENDS' %}
-                <a href="{% url 'profile:addFriend' user.username %}" class="btn btn-secondary">Adicionar Amigo</a>
-            {% elif friendship_status == 'PENDING' %}
-                <span class="btn btn-secondary">Pedido Pendente...</span>
-            {% elif friendship_status == 'FRIENDS' %}
+        {% if friendship_status == 'NOT_FRIENDS' %}
+        <a href="{% url 'profile:addFriend' user.username %}" class="btn btn-secondary">Adicionar Amigo</a>
+        {% elif friendship_status == 'PENDING' %}
+        <span class="btn btn-secondary">Pedido Pendente...</span>
+        {% elif friendship_status == 'FRIENDS' %}
+                <a href="{% url 'chat:room' user.username %}">CHAT</a>
                 <span class="btn btn-success" style="cursor: default;">Amigos</span>
             {% endif %}
         {% endif %}

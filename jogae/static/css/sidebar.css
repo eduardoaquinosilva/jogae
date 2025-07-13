@@ -1,47 +1,65 @@
-/*
-  This CSS makes the friends sidebar fixed to the right side of the screen.
-*/
-
-body {
-    /* Add padding to the right to prevent main content from hiding behind the sidebar */
-    /* The value should be slightly larger than the sidebar's width */
-    padding-right: 240px; 
-}
-
 .friends-sidebar {
     position: fixed;
-    top: 0;
     right: 0;
+    top: 60px; /* Adjust this value to match your navbar's height */
     width: 250px;
-    height: 100vh; /* Full viewport height */
-    background-color: #f1f1f1;
-    border-left: 1px solid #ddd;
-    padding: 10px;
-    overflow-y: auto; /* Add scroll if friends list is long */
-    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
-    z-index: 1000; /* Ensure it's above other content */
+    height: calc(100% - 60px);
+    background-color: #f8f9fa;
+    border-left: 1px solid #dee2e6;
+    padding: 15px;
+    overflow-y: auto;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+    z-index: 100; /* Ensure it appears above other page content */
 }
 
 .friends-sidebar h3 {
     margin-top: 0;
     border-bottom: 1px solid #ccc;
     padding-bottom: 10px;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #343a40;
 }
 
 .friends-sidebar ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.friends-sidebar li a {
-    display: block;
-    padding: 8px;
-    text-decoration: none;
-    color: #333;
-    border-radius: 4px;
+.friend-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 5px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in-out;
 }
 
-.friends-sidebar li a:hover {
-    background-color: #ddd;
+.friend-item:hover {
+    background-color: #e9ecef;
+}
+
+.friend-name {
+    color: #212529;
+    text-decoration: none;
+    font-weight: 500;
+    flex-grow: 1; /* Allows the name to take up available space */
+}
+
+.friend-chat-button {
+    color: #0d6efd;
+    text-decoration: none;
+    margin-left: 10px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease-in-out;
+    line-height: 1; /* Helps with vertical alignment */
+}
+
+.friend-chat-button:hover {
+    opacity: 1;
+}
+
+.friend-chat-button svg {
+    display: block; /* Removes extra space that can appear below an inline SVG */
 }

@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'daphne',
+    'channels',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     'games.apps.GamesConfig',
     'app_biblioteca.apps.AppBibliotecaConfig',
     'app_profile.apps.AppProfileConfig',
+    'app_chat.apps.AppChatConfig',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +125,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+ASGI_APPLICATION = 'jogae.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
