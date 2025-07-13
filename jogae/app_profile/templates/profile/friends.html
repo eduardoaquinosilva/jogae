@@ -10,7 +10,7 @@
 
 {% block content %}
 <div class="profile-container">
-    <a href="{% url 'profile:profile' %}">Voltar</a>
+    <a href="{% url 'profile:profile' request.user.username  %}">Voltar</a>
 
 
     <h2>Meus Amigos:</h2>

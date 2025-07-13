@@ -1,0 +1,47 @@
+/*
+  This CSS makes the friends sidebar fixed to the right side of the screen.
+*/
+
+body {
+    /* Add padding to the right to prevent main content from hiding behind the sidebar */
+    /* The value should be slightly larger than the sidebar's width */
+    padding-right: 240px; 
+}
+
+.friends-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 250px;
+    height: 100vh; /* Full viewport height */
+    background-color: #f1f1f1;
+    border-left: 1px solid #ddd;
+    padding: 10px;
+    overflow-y: auto; /* Add scroll if friends list is long */
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    z-index: 1000; /* Ensure it's above other content */
+}
+
+.friends-sidebar h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+.friends-sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.friends-sidebar li a {
+    display: block;
+    padding: 8px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 4px;
+}
+
+.friends-sidebar li a:hover {
+    background-color: #ddd;
+}

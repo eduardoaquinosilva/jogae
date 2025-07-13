@@ -22,6 +22,7 @@
       {% endif %}
     </div>
     <div class="content-container">
+      <p >Criador: <a href="{% url 'profile:profile' game.user.username %}">{{game.user.username}}</a></p>
       <p class="description">{{ game.description }}</p>
       <p class="rating">Rating: <span>{{ game.rating }}</span></p>
     </div>

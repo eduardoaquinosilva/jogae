@@ -14,7 +14,7 @@
   </nav>
   <nav class="navbar-items navbar-items-right">
     {% if request.user.is_authenticated %}
-    <a href="{% url 'profile:profile' %}">Perfil</a>
+    <a href="{% url 'profile:profile' request.user.username  %}">Perfil</a>
     <form class="navbar-items" action="{% url 'auth:logout' %}" method="POST">
       {% csrf_token %}
       <input class="navbar-button" type="submit" value="Logout :(">

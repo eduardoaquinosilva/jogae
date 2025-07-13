@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meus jogos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/app_profile/profile.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<div class="profile-container">
+    <a href="{% url 'profile:profile' request.user.username %}">Voltar</a>
+
+
+    <h2>Solicitações de Amizade:</h2>
+    
+    {% for solicitacao in pending_requests %}
+
+    <P>{{solicitacao.from_user.username}} quer ser seu amigo</P>
+    <form method="POST" action="{% url 'profile:solicitacoes' %}">
+        {% csrf_token %}
+        <input type="hidden" name="solicitacao_id" value="{{ solicitacao.id }}">
+        <button type="submit" class="btn btn-success mt-3" name="accept">Aceitar</button>
+        <button type="submit" class="btn btn-danger mt-3" name="reject">Rejeitar</button>
+    </form>
+
+    {% endfor %}
+    
+</div>
+{% endblock %}
