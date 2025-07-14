@@ -4,31 +4,55 @@
 {% block title %}Cadastrar Jogo{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/games/detail.css'%}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="{% static 'css/games/detail.css'%}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 {% endblock %}
 
 {% block content %}
-<div class="detail-container">
-  <div class="container">
-    <div class="title">
-      <h1>{{ game.title }}</h1>
+    <div class="detail-container">
+        <div class="container">
+            <div class="title">
+                <h1>{{ game.title }}</h1>
+            </div>
+            
+            <div class="game-img">
+                {% if game.picture %}
+                    <img src="{{game.picture.url}}" alt="{{ game.title }} cover" class="game-img">
+                {% else %}
+                    <p>Sem foto :(</p>
+                {% endif %}
+            </div>
+
+            <div class="content-container">
+                <p >Criador: <a href="{% url 'profile:profile' game.user.username %}">{{game.user.username}}</a></p>
+                <p class="description">{{ game.description }}</p>
+
+                {% if game.genres.all %}
+                    <div class="genres">
+                        <h4>Gêneros</h4>
+                        
+                        {% for genre in game.genres.all %}
+                            <span class="badge">{{ genre.name }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if game.tags.all %}
+                    <div class="tags">
+                        <h4>Tags</h4>
+                        
+                        {% for tag in game.tags.all %}
+                            <span class="badge">{{ tag.name }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <p class="rating">Rating: <span>{{ game.rating }}</span></p>
+            </div>
+
+            <a class="back-link" href="{% url 'home' %}">
+                <i class="fa-solid fa-chevron-left"></i>Voltar para jogos
+            </a>
+        </div>
     </div>
-    <div class="game-img">
-      {% if game.picture %}
-      <img src="{{game.picture.url}}" alt="{{ game.title }} cover" class="game-img">
-      {% else %}
-      <p>Sem foto :(</p>
-      {% endif %}
-    </div>
-    <div class="content-container">
-      <p >Criador: <a href="{% url 'profile:profile' game.user.username %}">{{game.user.username}}</a></p>
-      <p class="description">{{ game.description }}</p>
-      <p class="rating">Rating: <span>{{ game.rating }}</span></p>
-    </div>
-    <a class="back-link" href="{% url 'home' %}">
-      <i class="fa-solid fa-chevron-left"></i>Voltar para jogos
-    </a>
-  </div>
-</div>
 {% endblock %}
