@@ -2,6 +2,7 @@ from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Game
+from .forms import GameForm
 
 class IndexView(generic.ListView):
     template_name = "games/index.html"
@@ -17,11 +18,14 @@ class DetailView(generic.DetailView):
 
 class CreateView(LoginRequiredMixin, generic.CreateView):
     model = Game
-    fields = [
+    """ fields = [
         'title',
         'description',
-        'picture'
-    ]
+        'picture',
+        'genres',
+        'tags'
+    ] """
+    form_class = GameForm
     template_name = "games/create.html"
 
     def form_valid(self, form):
