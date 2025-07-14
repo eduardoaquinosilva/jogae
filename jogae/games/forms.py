@@ -1,5 +1,6 @@
 from django import forms
-from .models import Game, Genre, Tag
+from .models import Game, Genre, Tag, Rating
+
 
 
 class GameForm(forms.ModelForm):
@@ -60,3 +61,14 @@ class GameForm(forms.ModelForm):
             self.save_m2m()
 
         return game
+
+
+class RatingForm(forms.ModelForm):
+
+    class Meta:
+        model = Rating
+        fields = ['body', 'rating']
+        widgets = {
+            'rating': forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'max': 5, 'step': 0.5}),
+            'body': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Leave your comment here...'}),
+        }

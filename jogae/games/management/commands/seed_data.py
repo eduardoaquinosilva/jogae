@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.core.files import File
 from django.contrib.auth import get_user_model
-from games.models import Game, Genre, Tag
+from games.models import Game, Genre, Tag, Rating
 from app_profile.models import Friendship
 from app_biblioteca.models import FavoriteGamesByUser
 
@@ -59,6 +59,7 @@ class Command(BaseCommand):
         Game.objects.all().delete()
         Genre.objects.all().delete()
         Tag.objects.all().delete()
+        Rating.objects.all().delete()
         Friendship.objects.all().delete()
         FavoriteGamesByUser.objects.all().delete()
 
@@ -101,7 +102,6 @@ class Command(BaseCommand):
                 title=title,
                 description=description,
                 user=users[i % len(users)],
-                rating=round(random.uniform(3.0, 5.0), 1),
             )
 
             # Attach a theme-appropriate image
@@ -119,7 +119,20 @@ class Command(BaseCommand):
             # Store the theme with the game for later use
             game.theme_name = theme['theme']
             games.append(game)
-            self.stdout.write(f"  Created game: {game.title}")
+            self.stdout.write(f"  Created game: {game.title} (Theme: {theme['theme']})")
+
+        # === Create Ratings ===
+        self.stdout.write("Creating ratings...")
+        for game in games:
+            # Have 1 to 5 users rate each game
+            raters = random.sample(users, k=random.randint(1, 5))
+            for rater in raters:
+                Rating.objects.create(
+                    game=game,
+                    user=rater,
+                    body=f"This is a sample comment for {game.title} by {rater.username}.",
+                    rating=round(random.uniform(2.0, 5.0), 1)
+                )
 
         # === Create Friendships ===
         self.stdout.write("Creating friendships...")
