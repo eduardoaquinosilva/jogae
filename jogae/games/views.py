@@ -1,11 +1,7 @@
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-<<<<<<< Updated upstream
 from django.db.models import Avg, F
-from django.shortcuts import redirect
-=======
-from django.shortcuts import render
->>>>>>> Stashed changes
+from django.shortcuts import redirect, render
 
 from .models import Game
 from .forms import GameForm, RatingForm
@@ -21,9 +17,7 @@ from .recommendation_utils import (
     context_object_name = "popular_games"
 
     def get_queryset(self):
-<<<<<<< Updated upstream
         return Game.objects.annotate(avg_rating=Avg('ratings__rating')).order_by("-avg_rating")[:10]
-=======
         return Game.objects.order_by("rating")[:10] """
 
 def indexView(request):
@@ -51,7 +45,6 @@ def indexView(request):
             seen_games.add(game)
     
     return render(request, 'games/index.html', {'popular_games': final_recommendations[:10]})
->>>>>>> Stashed changes
 
 
 class DetailView(generic.DetailView):
