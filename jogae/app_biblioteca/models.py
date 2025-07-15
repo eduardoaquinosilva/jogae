@@ -6,4 +6,4 @@ from games.models import Game
 
 class FavoriteGamesByUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    games = models.ManyToManyField(Game, blank=True)
+    games = models.ManyToManyField(Game, blank=True, related_name='savedInLibrary')

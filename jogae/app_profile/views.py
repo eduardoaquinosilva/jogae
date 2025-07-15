@@ -3,8 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from app_cadastro_usuario.forms import UserChangeForm
-from django.db.models import Q
+from django.db.models import Q, Count
 from .models import Friendship
+from app_biblioteca.models import FavoriteGamesByUser
 from games.models import Game
 
 User = get_user_model()
@@ -41,7 +42,9 @@ def games(request,pk):
     
     user = get_object_or_404(User,username=pk)
 
-    games = Game.objects.filter(user=user)
+    games = Game.objects.filter(user=user).annotate(
+        save_count=Count('savedInLibrary')
+    ).order_by('-save_count')
 
     context = {'games' : games}
 

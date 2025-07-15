@@ -26,6 +26,8 @@
           {% endif %}
         </div>
         <div class="game-single__info">
+          <p>Rating: {{game.average_rating|floatformat:1}}</p>
+          <p>Quantidade de favoritos: {{ game.save_count }}</p>
           <div class="game-single__td">
             <h2 class="game-single__title">{{ game.title }}</h2>
             <p class="game-single__desc">{{ game.description }}</p>
