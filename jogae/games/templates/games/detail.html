@@ -49,6 +49,8 @@
                 <div class="mt-4">
                 <p class="rating">Average Rating: <strong>{{ game.average_rating|floatformat:1 }} / 5.0</strong></p>
                 <h3>User Reviews ({{ ratings.count }})</h3>
+                <a href="?orderby=recentes">Recentes</a> |
+                <a href="?orderby=rating">Rating</a>
                 {% for rating in ratings %}
                     <div class="card my-3">
                         <div class="card-body">

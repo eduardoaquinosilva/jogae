@@ -1,6 +1,6 @@
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Avg
+from django.db.models import Avg, F
 from django.shortcuts import redirect
 
 from .models import Game
@@ -21,7 +21,15 @@ class DetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         game = self.get_object()
-        context['ratings'] = game.ratings.order_by('-created')
+
+        ordering = self.request.GET.get('orderby', 'recentes') 
+
+        if ordering == 'recentes':
+            context['ratings'] = game.ratings.order_by('-created')
+
+        if ordering == 'rating':
+            context['ratings'] = game.ratings.order_by('-rating')
+
         if self.request.user.is_authenticated:
             context['rating_form'] = RatingForm()
         return context

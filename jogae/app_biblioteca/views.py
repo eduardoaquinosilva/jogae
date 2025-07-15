@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import FavoriteGamesByUser
 from django.contrib.auth.decorators import login_required
 from games.models import Game
+from django.db.models import Avg, F
 # Create your views here.
 
 @login_required
@@ -24,7 +25,7 @@ def Biblioteca(request):
 
     # Ordena de acordo com o que foi solicitado
     if ordering == 'rating':
-        game_list = game_list.order_by('-rating')
+        game_list = game_list.annotate(avg_rating=Avg('ratings__rating')).order_by(F('avg_rating').desc(nulls_last=True))
     else:
         game_list = game_list.order_by('title')
 

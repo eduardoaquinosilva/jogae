@@ -39,7 +39,7 @@ class Game(models.Model):
 class Rating(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='ratings')
     user = models.ForeignKey("app_cadastro_usuario.User", on_delete=models.CASCADE)
-    body = models.TextField()
+    body = models.TextField(blank=True)
     rating = models.FloatField(
         validators = [MinValueValidator(0.0), MaxValueValidator(5.0)]
     )
