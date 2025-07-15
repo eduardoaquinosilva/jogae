@@ -24,7 +24,8 @@ def indexView(request):
     user = request.user
 
     if not hasattr(user, 'favoritegamesbyuser') or not user.favoritegamesbyuser.games.exists():
-        recommendations = Game.objects.order_by('-rating')[:10]
+        #recommendations = Game.objects.order_by('-rating')[:10]
+        recommendations = Game.objects.annotate(avg_rating=Avg('ratings__rating')).order_by("-avg_rating")[:10]
         return render(request, 'games/index.html', {'popular_games': recommendations})
     
     user_favorites = list(user.favoritegamesbyuser.games.all())
