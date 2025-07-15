@@ -1,36 +1,68 @@
+/* static/css/sidebar.css (versão corrigida) */
+
 .friends-sidebar {
     position: fixed;
+    /* MUDANÇA 1: A sidebar agora é controlada pela propriedade 'right' */
     right: 0;
-    /* Ajuste o 'top' para a altura da sua navbar. 5rem é um valor comum. */
     top: 5rem;
     width: 250px;
-    /* A altura ocupa o restante da tela */
     height: calc(100vh - 5rem);
     background-color: rgba(26, 78, 102, 0.8);
     backdrop-filter: blur(8px);
     border-left: 1px solid rgba(255, 255, 255, 0.15);
     padding: 1rem;
-    overflow-y: auto;
-    z-index: 1020; /* Garante que fique acima de outros elementos */
+    z-index: 1020;
     color: #fff;
+    /* MUDANÇA 2: A transição agora anima a propriedade 'right' */
+    transition: right 0.35s ease-in-out;
 }
 
-/* Scrollbar com o tema do site */
-.friends-sidebar::-webkit-scrollbar {
-    width: 8px;
+/* MUDANÇA 3: O estado recolhido agora move a sidebar para fora da tela */
+.friends-sidebar.collapsed {
+    /* Move a sidebar para a direita, para fora da tela.
+       O valor negativo é a largura da própria sidebar. */
+    right: -250px;
 }
 
-.friends-sidebar::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
+/* O botão de controle agora funciona perfeitamente com a nova lógica */
+.sidebar-toggle {
+    position: absolute;
+    top: 50%;
+    /* Ele continua posicionado à esquerda da sua sidebar 'pai' */
+    left: -20px;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 60px;
+    background-color: rgba(26, 78, 102, 0.8);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px 0 0 8px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
 }
 
-.friends-sidebar::-webkit-scrollbar-thumb {
-    background-color: rgba(91, 158, 173, 0.7);
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: content-box;
+.sidebar-toggle:hover {
+    background-color: rgba(91, 158, 173, 1);
 }
 
+.sidebar-content {
+    opacity: 1;
+    /* A transição agora é um pouco mais rápida */
+    transition: opacity 0.2s ease-in-out;
+}
+
+.friends-sidebar.collapsed .sidebar-content {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* --- Estilos restantes (sem alterações) --- */
 .friends-sidebar h3 {
     margin-top: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -39,56 +71,14 @@
     font-size: 1.3rem;
     text-align: center;
     color: #fff;
+    white-space: nowrap;
 }
 
-.friends-sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.friend-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.7rem;
-    border-radius: 0.6rem;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.friend-item:hover {
-    background-color: rgba(91, 158, 173, 0.5);
-}
-
-.friend-name {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 600;
-    flex-grow: 1;
-    transition: color 0.2s;
-}
-
-.friend-name:hover {
-    text-decoration: underline;
-    color: #ade8f4;
-}
-
-.friend-chat-button {
-    color: #fff;
-    text-decoration: none;
-    margin-left: 10px;
-    padding: 5px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.friend-chat-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.friend-chat-button svg {
-    display: block;
-}
+.friends-sidebar ul { list-style: none; padding: 0; margin: 0; }
+.friend-item { display: flex; justify-content: space-between; align-items: center; padding: 0.7rem; border-radius: 0.6rem; transition: background-color 0.2s; }
+.friend-item:hover { background-color: rgba(91, 158, 173, 0.5); }
+.friend-name { color: #fff; text-decoration: none; font-weight: 600; flex-grow: 1; transition: color 0.2s; white-space: nowrap; }
+.friend-name:hover { text-decoration: underline; color: #ade8f4; }
+.friend-chat-button { color: #fff; text-decoration: none; margin-left: 10px; padding: 5px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; }
+.friend-chat-button:hover { background-color: rgba(255, 255, 255, 0.2); }
+.friend-chat-button svg { display: block; }
