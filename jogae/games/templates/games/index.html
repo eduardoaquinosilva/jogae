@@ -8,6 +8,12 @@
 {% endblock %}
 
 {% block content %}
+
+<form method="GET" action="{% url 'games:index' %}" class="search-form">
+            <input type="text" name="q" placeholder="Buscar jogo..." value="{{ search_query }}">
+            <button type="submit">Buscar</button>
+        </form>
+
 <div class="container">
   <div class="games-container">
     <div class="games-container-title">

@@ -29,7 +29,16 @@ def indexView(request):
         return render(request, 'games/index.html', {'popular_games': recommendations})
     
     user_favorites = list(user.favoritegamesbyuser.games.all())
+
+    
+    # Coleta pesquisa de usuário e ordenação
+    search_query = request.GET.get('q', '')
+
     all_games = list(Game.objects.all())
+
+    if search_query:
+        all_games = Game.objects.filter(title__icontains=search_query)
+        return render(request, 'games/index.html', {'popular_games': all_games[:10]})
 
     content_recs = get_content_based_recommendations(user_favorites, all_games)
     collab_recs = get_collaborative_recommendations(user)
