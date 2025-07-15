@@ -3,7 +3,7 @@
   <nav class="navbar-items">
     <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}"></a>
     <a class="navbar-link active" href="{% url 'home' %}">Página Inicial</a>
-    <a class="navbar-link" href="{% url 'biblioteca' %}">Biblioteca</a>
+    <a class="navbar-link" href="{% url 'bibliotecaHome' %}">Biblioteca</a>
   </nav>
   <nav class="navbar-items navbar-items-right">
     {% if request.user.is_authenticated %}

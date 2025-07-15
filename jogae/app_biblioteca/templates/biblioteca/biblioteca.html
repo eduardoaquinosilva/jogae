@@ -1,56 +1,56 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Jogos{% endblock %}
-
+{% block title %}Biblioteca{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/games/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/games/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/biblioteca/home.css' %}">
 {% endblock %}
 
-
 {% block content %}
+    <div class="search-sort-container">
+        <form method="GET" action="{% url 'biblioteca:homeBiblioteca' %}" class="search-form">
+            <input type="text" name="q" placeholder="Buscar na biblioteca..." value="{{ search_query }}">
+            <button type="submit">Buscar</button>
+        </form>
 
-<form method="GET" action="{% url 'biblioteca:homeBiblioteca' %}">
-  <input type="text" name="q" placeholder="Search for a game..." value="{{ search_query }}">
-  <button type="submit">Search</button>
-</form>
-
-<div>
-  <span>Ordenar por:</span>
-  <a href="?orderby=title">Título</a> |
-  <a href="?orderby=rating">Rating</a>
-</div>
-
-<div class="container">
-  <div class="games-container">
-    <div class="games-container-title">
-        <h1>Jogos Favoritos</h1>    
+        <div class="sort-links">
+            <span>Ordenar por:</span>
+            <a href="?orderby=title">Título</a> |
+            <a href="?orderby=rating">Rating</a>
+        </div>
     </div>
-<div class="games">
-    
-    {% for favoriteGame in games %}
-    <div class="game-single">
-            <div class="game-single__image">
-              {% if favoriteGame.picture %}
-              <img src="{{favoriteGame.picture.url}}" alt="{{ favoriteGame.title }} cover" class="game-single__img">
-              {% else %}
-              <p>Sem foto :(</p>
-              {% endif %}
-            </div>
-            <div class="game-single__info">
-              <div class="game-single__td">
-                <h2 class="game-single__title">{{ favoriteGame.title }}</h2>
-                <p class="game-single__desc">{{ favoriteGame.description }}</p>
-              </div>
-              <div class="game-single__buttons">
-                <a href="{% url 'games:detail' favoriteGame.id %}" class="btn">Visualizar</a>
-              </div>
-            </div>
-          </div>
-    {% endfor %}
-</div>
 
+    <div class="container">
+        <div class="games-container">
+            <div class="games-container-title">
+                <h1>Jogos Favoritos</h1>
+            </div>
+            <div class="games">
+                {% for favoriteGame in games %}
+                <div class="game-single">
+                    <div class="game-single__image">
+                        {% if favoriteGame.picture %}
+                        <img src="{{favoriteGame.picture.url}}" alt="{{ favoriteGame.title }} cover" class="game-single__img">
+                        {% else %}
+                        <p>Sem foto :(</p>
+                        {% endif %}
+                    </div>
+                    <div class="game-single__info">
+                        <div class="game-single__td">
+                            <h2 class="game-single__title">{{ favoriteGame.title }}</h2>
+                            <p class="game-single__desc">{{ favoriteGame.description|truncatewords:40 }}</p>
+                        </div>
+                        <div class="game-single__buttons">
+                            <a href="{% url 'games:detail' favoriteGame.id %}" class="btn">Visualizar</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p style="text-align: center; font-size: 1.2rem;">Sua biblioteca está vazia.</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock content %}

@@ -9,95 +9,84 @@
 {% endblock %}
 
 {% block content %}
-    <div class="detail-container">
-        <div class="container">
-            <div class="title">
-                <h1>{{ game.title }}</h1>
-            </div>
-            
-            <div class="game-img">
-                {% if game.picture %}
-                    <img src="{{game.picture.url}}" alt="{{ game.title }} cover" class="game-img">
-                {% else %}
-                    <p>Sem foto :(</p>
-                {% endif %}
-            </div>
-
-            <div class="content-container">
-                <p >Criador: <a href="{% url 'profile:profile' game.user.username %}">{{game.user.username}}</a></p>
-                <p class="description">{{ game.description }}</p>
-
-                {% if game.genres.all %}
-                    <div class="genres">
-                        <h4>Gêneros</h4>
-                        
-                        {% for genre in game.genres.all %}
-                            <span class="badge">{{ genre.name }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                {% if game.tags.all %}
-                    <div class="tags">
-                        <h4>Tags</h4>
-                        
-                        {% for tag in game.tags.all %}
-                            <span class="badge">{{ tag.name }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                <div class="mt-4">
-                <p class="rating">Average Rating: <strong>{{ game.average_rating|floatformat:1 }} / 5.0</strong></p>
-                <h3>User Reviews ({{ ratings.count }})</h3>
-                <a href="?orderby=recentes">Recentes</a> |
-                <a href="?orderby=rating">Rating</a>
-                {% for rating in ratings %}
-                    <div class="card my-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Rating: {{ rating.rating|floatformat:1 }} / 5.0</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">By <a href="{% url 'profile:profile' rating.user.username %}">{{ rating.user.username }}</a> on {{ rating.created|date:"F d, Y" }}</h6>
-                            <p class="card-text">{{ rating.body }}</p>
-                        </div>
-                    </div>
-                {% empty %}
-                    <p>No reviews yet. Be the first to leave one!</p>
-                {% endfor %}
-            </div>
-            </div>
-
-        <div class="ratings-section">
-            <h3>Leave a Rating</h3>
-            {% if user.is_authenticated %}
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="id_rating" class="form-label">Rating (0-5):</label>
-                        {{ rating_form.rating }}
-                        {% if rating_form.rating.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ rating_form.rating.errors.as_text }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-3">
-                        <label for="id_body" class="form-label">Comment:</label>
-                        {{ rating_form.body }}
-                        {% if rating_form.body.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ rating_form.body.errors.as_text }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Review</button>
-                </form>
+<div class="detail-container">
+    <div class="game-header">
+        <div class="game-img-container">
+            {% if game.picture %}
+                <img src="{{game.picture.url}}" alt="{{ game.title }} cover" class="game-img">
             {% else %}
-                <p><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to leave a review.</p>
+                <div class="no-photo"><p>Sem foto :(</p></div>
             {% endif %}
         </div>
-
-            <a class="back-link" href="{% url 'home' %}">
-                <i class="fa-solid fa-chevron-left"></i>Voltar para jogos
-            </a>
+        <div class="game-main-info">
+            <h1>{{ game.title }}</h1>
+            <p class="creator">Criador: <a href="{% url 'profile:profile' game.user.username %}">{{game.user.username}}</a></p>
+            <p class="description">{{ game.description }}</p>
         </div>
     </div>
+
+    <div class="game-meta">
+        {% if game.genres.all %}
+            <div class="genres">
+                <h4>Gêneros</h4>
+                {% for genre in game.genres.all %}<span class="badge">{{ genre.name }}</span>{% endfor %}
+            </div>
+        {% endif %}
+        {% if game.tags.all %}
+            <div class="tags">
+                <h4>Tags</h4>
+                {% for tag in game.tags.all %}<span class="badge">{{ tag.name }}</span>{% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="reviews-section">
+        <div class="reviews-header">
+            <h3>Avaliações ({{ ratings.count }})</h3>
+            <p class="rating">Média: <strong>{{ game.average_rating|floatformat:1 }} / 5.0</strong></p>
+            <div class="sort-links">
+                <a href="?orderby=recentes">Recentes</a> |
+                <a href="?orderby=rating">Rating</a>
+            </div>
+        </div>
+        
+        <div class="reviews-list">
+            {% for rating in ratings %}
+            <div class="review-card">
+                <div class="review-card-header">
+                    <span class="review-rating">Nota: {{ rating.rating|floatformat:1 }} / 5.0</span>
+                    <span class="review-meta">Por <a href="{% url 'profile:profile' rating.user.username %}">{{ rating.user.username }}</a> em {{ rating.created|date:"d M, Y" }}</span>
+                </div>
+                <div class="review-card-body"><p>{{ rating.body }}</p></div>
+            </div>
+            {% empty %}
+                <p>Nenhuma avaliação ainda. Seja o primeiro!</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="rating-form-section">
+        <h3>Deixe sua Avaliação</h3>
+        {% if user.is_authenticated %}
+            <form method="post" class="rating-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ rating_form.rating.id_for_label }}">Nota (0-5):</label>
+                    {{ rating_form.rating }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ rating_form.body.id_for_label }}">Comentário:</label>
+                    {{ rating_form.body }}
+                </div>
+                <button type="submit" class="btn-submit">Enviar Avaliação</button>
+            </form>
+        {% else %}
+            <p><a href="{% url 'auth:login' %}?next={{ request.path }}">Faça login</a> para deixar uma avaliação.</p>
+        {% endif %}
+    </div>
+
+    <a class="back-link" href="{% url 'home' %}">
+        <i class="fa-solid fa-chevron-left"></i> Voltar para jogos
+    </a>
+</div>
 {% endblock %}

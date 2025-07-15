@@ -4,41 +4,40 @@
 {% block title %}Meus jogos{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/app_profile/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app_profile/profile.css' %}">
 {% endblock %}
 
-
 {% block content %}
-<div class="profile-container">
-    <a href="{% url 'profile:profile' request.user.username %}">Voltar</a>
+<div class="user-games-container">
+    <a href="{% url 'profile:profile' user.username %}" class="btn btn-back">Voltar ao Perfil</a>
 
+    <h2>Jogos de {{ user.username }}</h2>
 
-    <h2>jogos</h2>
-    
     {% for game in games %}
-
     <div class="game-single">
         <div class="game-single__image">
-          {% if game.picture %}
-          <img src="{{game.picture.url}}" alt="{{ game.title }} cover" class="game-single__img">
-          {% else %}
-          <p>Sem foto :(</p>
-          {% endif %}
+            {% if game.picture %}
+                <img src="{{game.picture.url}}" alt="{{ game.title }} cover" class="game-single__img">
+            {% else %}
+                <div class="no-photo" style="width: 15rem; height: 15rem;"><p>Sem foto :(</p></div>
+            {% endif %}
         </div>
         <div class="game-single__info">
-          <p>Rating: {{game.average_rating|floatformat:1}}</p>
-          <p>Quantidade de favoritos: {{ game.save_count }}</p>
-          <div class="game-single__td">
-            <h2 class="game-single__title">{{ game.title }}</h2>
-            <p class="game-single__desc">{{ game.description }}</p>
-          </div>
-          <div class="game-single__buttons">
-            <a href="{% url 'games:detail' game.id %}" class="btn">Visualizar</a>
-          </div>
+            <div class="game-single__td">
+                <h2 class="game-single__title">{{ game.title }}</h2>
+                <div class="game-single-stats">
+                    <p><strong>Rating:</strong> {{game.average_rating|floatformat:1}} / 5.0</p>
+                    <p><strong>Salvo:</strong> {{ game.save_count }} vezes</p>
+                </div>
+                <p class="game-single__desc">{{ game.description|truncatewords:40 }}</p>
+            </div>
+            <div class="game-single__buttons">
+                <a href="{% url 'games:detail' game.id %}" class="btn btn-primary">Visualizar</a>
+            </div>
         </div>
-      </div>
-
+    </div>
+    {% empty %}
+    <p style="text-align: center; font-size: 1.2rem;">{{ user.username }} ainda não criou nenhum jogo.</p>
     {% endfor %}
-    
 </div>
 {% endblock %}

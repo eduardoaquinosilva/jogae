@@ -1,0 +1,90 @@
+/* Estilos gerais para as páginas de perfil */
+body {
+    background-color: #986a4c;
+    background-image: url("../../img/terraria.gif");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: #fff;
+}
+
+.profile-container, .friends-container, .requests-container, .edit-profile-container, .user-games-container {
+    width: 100%;
+    max-width: 60rem;
+    background-color: rgba(26, 78, 102, 0.75);
+    border-radius: 0.8rem;
+    padding: 2.5rem;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Estilos de Botões Genéricos */
+.btn { display: inline-block; padding: 0.7rem 1.2rem; border-radius: 6px; text-decoration: none; color: white; font-weight: 600; text-align: center; border: none; cursor: pointer; transition: all 0.2s ease; }
+.btn:hover { transform: translateY(-2px); }
+.btn-primary { background-color: #3f88c5; }
+.btn-primary:hover { background-color: #336b9e; }
+.btn-secondary { background-color: #586994; }
+.btn-secondary:hover { background-color: #46547a; }
+.btn-success { background-color: #2c7a7b; }
+.btn-success:hover { background-color: #285e61; }
+.btn-danger { background-color: #c53030; }
+.btn-danger:hover { background-color: #9b2c2c; }
+.btn-back { align-self: flex-start; background-color: rgba(255, 255, 255, 0.2); }
+.btn-back:hover { background-color: rgba(255, 255, 255, 0.4); }
+
+/* Perfil Principal (profile.html) */
+.profile-header { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 1.5rem; }
+.profile-picture { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; margin-bottom: 1rem; }
+.profile-header h1 { font-size: 2.2rem; margin: 0; }
+.profile-email { color: #ccc; font-size: 1rem; }
+.profile-details h2 { margin-bottom: 0.8rem; font-size: 1.4rem; color: #e0e0e0; }
+.profile-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+.profile-actions span.btn { cursor: default; }
+.profile-actions a[href*="chat"] { background-color: #1a9988; padding: 0.7rem 1.2rem; border-radius: 6px; text-decoration: none; color: white; font-weight: 600; }
+.profile-actions a[href*="chat"]:hover { background-color: #137a6a; }
+
+/* Editar Perfil (edit_profile.html) */
+.edit-profile-container h2 { text-align: center; font-size: 1.8rem; margin-bottom: 1rem; }
+.edit-profile-container form { display: flex; flex-direction: column; gap: 1rem; }
+.edit-profile-container form p { display: flex; flex-direction: column; gap: 0.5rem; }
+.edit-profile-container form label { font-weight: 600; }
+.edit-profile-container form input, .edit-profile-container form textarea { width: 100%; padding: 0.65rem 0.8rem; border: 1px solid #ccc; border-radius: 6px; background-color: #fafafa; font-size: 0.95rem; color: #333; }
+.edit-profile-container form textarea { min-height: 120px; resize: vertical; }
+.edit-profile-container button[type="submit"] { align-self: center; width: 50%; }
+
+/* Solicitações de Amizade (solicitacoes.html) */
+.requests-container h2 { text-align: center; font-size: 1.8rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 1rem; }
+.request-item { display: flex; justify-content: space-between; align-items: center; background-color: rgba(91, 158, 173, 0.5); padding: 1rem 1.5rem; border-radius: 8px; }
+.request-item p { margin: 0; font-size: 1.1rem; }
+.request-item p a { color: #ade8f4; text-decoration: none; font-weight: bold; }
+.request-item p a:hover { text-decoration: underline; }
+.request-item form { display: flex; gap: 0.8rem; margin: 0; }
+.request-item form button { margin: 0; }
+
+/* Lista de Amigos (amigos.html) */
+.friends-container > h2 { text-align: center; font-size: 1.8rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 1rem; }
+.friend-card { background-color: rgba(91, 158, 173, 0.5); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.friend-card .profile-header { flex-direction: row; justify-content: flex-start; align-items: center; gap: 1.5rem; border: none; padding: 0; }
+.friend-card .profile-picture { width: 60px; height: 60px; margin: 0; }
+.friend-card .profile-header h1 { font-size: 1.5rem; }
+.friend-card h3 { margin-top: 1.5rem; margin-bottom: 1rem; font-size: 1.2rem; color: #e0e0e0; }
+.friend-card .game-single { background-color: rgba(26, 78, 102, 0.6); padding: 1rem; gap: 1rem; align-items: center; margin-bottom: 0.5rem; }
+.friend-card .game-single__img { width: 5rem; height: 5rem; object-fit: cover; }
+.friend-card .game-single__info { flex-direction: row; align-items: center; }
+.friend-card .game-single__title { font-size: 1.2rem; }
+.friend-card .game-single__desc { display: none; }
+.friend-card .game-single__buttons .btn { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
+
+/* Jogos do Usuário (jogos_do_usuario.html) */
+.user-games-container h2 { text-align: center; font-size: 1.8rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 1rem; }
+.user-games-container .game-single { display: flex; min-height: 10rem; gap: 1.5rem; background-color: rgba(91, 158, 173, 0.8); border-radius: 0.5rem; padding: 1.5rem; align-items: flex-start; }
+.user-games-container .game-single__img { width: 15rem; height: 15rem; align-self: center; border-radius: 0.5rem; object-fit: cover; }
+.user-games-container .game-single__info { flex: 1; height: 100%; gap: 1rem; display: flex; flex-direction: column; align-items: flex-start; }
+.user-games-container .game-single-stats { display: flex; gap: 1.5rem; background-color: rgba(0,0,0,0.2); padding: 0.5rem 1rem; border-radius: 6px; width: 100%; }
+.user-games-container .game-single__td { padding: 0; gap: 1rem; width: 100%; }
+.user-games-container .game-single__title { font-size: 1.8rem; }
+.user-games-container .game-single__desc { background-color: rgba(255, 255, 255, 0.1); border-radius: 0.3rem; font-size: 1rem; padding: 0.8rem; line-height: 1.4; margin-bottom: 1rem; }
+.user-games-container .game-single__buttons { align-self: flex-end; }

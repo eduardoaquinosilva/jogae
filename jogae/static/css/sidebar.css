@@ -1,24 +1,44 @@
 .friends-sidebar {
     position: fixed;
     right: 0;
-    top: 60px; /* Adjust this value to match your navbar's height */
+    /* Ajuste o 'top' para a altura da sua navbar. 5rem é um valor comum. */
+    top: 5rem;
     width: 250px;
-    height: calc(100% - 60px);
-    background-color: #f8f9fa;
-    border-left: 1px solid #dee2e6;
-    padding: 15px;
+    /* A altura ocupa o restante da tela */
+    height: calc(100vh - 5rem);
+    background-color: rgba(26, 78, 102, 0.8);
+    backdrop-filter: blur(8px);
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 1rem;
     overflow-y: auto;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.05);
-    z-index: 100; /* Ensure it appears above other page content */
+    z-index: 1020; /* Garante que fique acima de outros elementos */
+    color: #fff;
+}
+
+/* Scrollbar com o tema do site */
+.friends-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.friends-sidebar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.friends-sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(91, 158, 173, 0.7);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
 }
 
 .friends-sidebar h3 {
     margin-top: 0;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-    color: #343a40;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 0.8rem;
+    margin-bottom: 0.8rem;
+    font-size: 1.3rem;
+    text-align: center;
+    color: #fff;
 }
 
 .friends-sidebar ul {
@@ -31,35 +51,44 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 5px;
-    border-radius: 5px;
+    padding: 0.7rem;
+    border-radius: 0.6rem;
     transition: background-color 0.2s ease-in-out;
 }
 
 .friend-item:hover {
-    background-color: #e9ecef;
+    background-color: rgba(91, 158, 173, 0.5);
 }
 
 .friend-name {
-    color: #212529;
+    color: #fff;
     text-decoration: none;
-    font-weight: 500;
-    flex-grow: 1; /* Allows the name to take up available space */
+    font-weight: 600;
+    flex-grow: 1;
+    transition: color 0.2s;
+}
+
+.friend-name:hover {
+    text-decoration: underline;
+    color: #ade8f4;
 }
 
 .friend-chat-button {
-    color: #0d6efd;
+    color: #fff;
     text-decoration: none;
     margin-left: 10px;
-    opacity: 0.7;
-    transition: opacity 0.2s ease-in-out;
-    line-height: 1; /* Helps with vertical alignment */
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease-in-out;
 }
 
 .friend-chat-button:hover {
-    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 .friend-chat-button svg {
-    display: block; /* Removes extra space that can appear below an inline SVG */
+    display: block;
 }
