@@ -3,12 +3,18 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from games.views import IndexView
+#from games.views import IndexView
+
+from games import views as games_views
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('cadastro_usuario/', include('app_cadastro_usuario.urls')),
-    path('', IndexView.as_view(), name='home'),
+    #path('', IndexView.as_view(), name='home'),
+    #path('', include('games.urls')),
+    
+    path('', games_views.indexView, name='home'),
+
     path('games/', include("games.urls")),
     path('accounts/', include("app_cadastro_usuario.urls")),
     path('biblioteca/', include("app_biblioteca.urls")),
