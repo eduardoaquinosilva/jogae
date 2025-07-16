@@ -23,52 +23,72 @@ from .recommendation_utils import (
 
 def indexView(request):
     user = request.user
-
-    if not hasattr(user, 'favoritegamesbyuser') or not user.favoritegamesbyuser.games.exists():
-        #recommendations = Game.objects.order_by('-rating')[:10]
-        recommendations = Game.objects.annotate(avg_rating=Avg('ratings__rating')).order_by("-avg_rating")[:10]
-        return render(request, 'games/index.html', {'popular_games': recommendations})
-    
-    user_favorites = list(user.favoritegamesbyuser.games.all())
-
-    
-    # Coleta pesquisa de usuário e ordenação
     search_query = request.GET.get('q', '')
-
-    all_games = list(Game.objects.all())
+    sort_param = request.GET.get('orderby', None)
+    
+    games_to_display = None
 
     if search_query:
-        all_games = Game.objects.filter(title__icontains=search_query)
-        return render(request, 'games/index.html', {'popular_games': all_games[:10]})
 
+        games_to_display = Game.objects.filter(title__icontains=search_query)
     
-    content_rating_recs, user_profile = get_content_based_rating(user, all_games, return_profile=True)
-
-    content_recs = get_content_based_recommendations(user_favorites, all_games)
-    collab_recs = get_collaborative_recommendations(user)
-    friend_recs = get_friend_based_recommendations(user)
-
-    # Combina todas as recomendações
-    combined_recs = content_rating_recs + content_recs + friend_recs + collab_recs
-
-    # Retira os jogos já favoritados ou duplicados
-    filtered_recs = [game for game in combined_recs if game not in user_favorites]
-    unique_recs = []
-    seen_games = set()
-    for game in filtered_recs:
-        if game not in seen_games:
-            unique_recs.append(game)
-            seen_games.add(game)
-
-    # Se possuirmos as recomendações e o gosto do usuário, usa o filtro baseado em conteúdo
-    if unique_recs and user_profile is not None:
-        from .recommendation_utils import filter_by_similarity
-        final_recommendations = filter_by_similarity(user_profile, unique_recs)[:10]
     else:
-        # Caso não possua, retorna os 10 primeiros elementos das recomendações
-        final_recommendations = unique_recs[:10]
 
-    return render(request, 'games/index.html', {'popular_games': final_recommendations})
+        if not hasattr(user, 'favoritegamesbyuser') or not user.favoritegamesbyuser.games.exists():
+
+            games_to_display = Game.objects.annotate(avg_rating=Avg('ratings__rating')).order_by("-avg_rating")
+        else:
+
+            user_favorites = list(user.favoritegamesbyuser.games.all())
+            all_games_list = list(Game.objects.all())
+            
+            content_recs = get_content_based_recommendations(user_favorites, all_games_list)
+            collab_recs = get_collaborative_recommendations(user)
+            friend_recs = get_friend_based_recommendations(user)
+            
+            combined_recs = content_recs + friend_recs + collab_recs
+            
+            final_recommendations = []
+            seen_pks = {game.pk for game in user_favorites}
+
+            for game in combined_recs:
+                if game.pk not in seen_pks:
+                    final_recommendations.append(game)
+                    seen_pks.add(game.pk)
+            
+            games_to_display = final_recommendations
+
+    if sort_param:
+        if isinstance(games_to_display, list):
+            
+            if sort_param == 'title':
+                games_to_display = sorted(games_to_display, key=lambda game: game.title)
+            elif sort_param == 'rating':
+                
+                game_ids = [game.id for game in games_to_display]
+                
+                games_with_ratings = Game.objects.filter(pk__in=game_ids).annotate(
+                    avg_rating=Avg('ratings__rating')
+                ).order_by('-avg_rating')
+                games_to_display = list(games_with_ratings)
+
+        else:
+            if sort_param == 'title':
+                games_to_display = games_to_display.order_by('title')
+            elif sort_param == 'rating':
+                games_to_display = games_to_display.annotate(avg_rating=Avg('ratings__rating')).order_by('-avg_rating')
+
+    if not isinstance(games_to_display, list):
+        final_list = games_to_display[:10]
+    else:
+        final_list = games_to_display[:10]
+
+    context = {
+        'popular_games': final_list,
+        'search_query': search_query,
+    }
+    
+    return render(request, 'games/index.html', context)
 
 
 class DetailView(generic.DetailView):

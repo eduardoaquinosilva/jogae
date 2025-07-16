@@ -125,3 +125,59 @@ body {
 .game-single__buttons .btn:hover {
   background-color: #285e61;
 }
+
+.search-sort-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  max-width: 90%;
+  background-color: rgba(26, 78, 102, 0.7);
+  padding: 1rem;
+  border-radius: 8px;
+  backdrop-filter: blur(5px);
+}
+
+.search-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-form input[type="text"] {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fafafa;
+  color: #333;
+  min-width: 250px;
+}
+
+.search-form button {
+  padding: 0.6rem 1rem;
+  background-color: #2c7a7b;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-form button:hover {
+  background-color: #285e61;
+}
+
+.sort-links {
+  color: #fff;
+}
+
+.sort-links a {
+  color: #e0e0e0;
+  text-decoration: none;
+  font-weight: 600;
+  margin: 0 0.5rem;
+}
+
+.sort-links a:hover {
+  text-decoration: underline;
+}

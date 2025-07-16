@@ -9,10 +9,18 @@
 
 {% block content %}
 
-<form method="GET" action="{% url 'games:index' %}" class="search-form">
-            <input type="text" name="q" placeholder="Buscar jogo..." value="{{ search_query }}">
-            <button type="submit">Buscar</button>
-        </form>
+<div class="search-sort-container">
+  <form method="GET" action="{% url 'games:index' %}" class="search-form">
+      <input type="text" name="q" placeholder="Buscar jogo..." value="{{ search_query }}">
+      <button type="submit">Buscar</button>
+  </form>
+
+  <div class="sort-links">
+      <span>Ordenar por:</span>
+      <a href="?orderby=title&q={{ search_query|urlencode }}">Título</a> |
+      <a href="?orderby=rating&q={{ search_query|urlencode }}">Nota</a>
+  </div>
+</div>
 
 <div class="container">
   <div class="games-container">
