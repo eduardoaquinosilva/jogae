@@ -1,0 +1,43 @@
+# Define the services (containers) for your application
+services:
+  # The Django/Daphne application service
+  web:
+    # Build the image from the Dockerfile in the current directory
+    build: .
+    # The command to run the application, using Daphne as specified in the Dockerfile.
+    # Set the working directory to where manage.py is located
+    working_dir: /app/jogae
+    # This will be executed after the container starts.
+    command: daphne -b 0.0.0.0 -p 8000 jogae.asgi:application
+    # Volumes mount host paths or named volumes into the container
+    volumes:
+      # Mount the project directory to the container for live code reloading
+      - .:/app
+      # Use a named volume for the SQLite database to ensure data persistence
+      - db_data:/app/data
+      # Use a named volume for user-uploaded media files
+      - media_data:/app/media
+      # Use a named volume for collected static files
+      - static_data:/app/staticfiles
+    # Map port 8000 on the host to port 8000 in the container
+    ports:
+      - "8000:8000"
+    # Set environment variables inside the container
+    environment:
+      - DJANGO_SETTINGS_MODULE=jogae.settings
+      # PYTHONPATH is no longer needed as working_dir is automatically added to Python's search path
+      - PYTHONUNBUFFERED=1
+    # Specify that the 'web' service depends on the 'redis' service
+    depends_on:
+      - redis
+
+  # The Redis service for Django Channels
+  redis:
+    # Use the official lightweight Redis image
+    image: "redis:7-alpine"
+
+# Define the named volumes for data persistence
+volumes:
+  db_data:
+  media_data:
+  static_data:

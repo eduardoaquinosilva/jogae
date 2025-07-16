@@ -38,7 +38,7 @@ class Game(models.Model):
 
 class Rating(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='ratings')
-    user = models.ForeignKey("app_cadastro_usuario.User", on_delete=models.CASCADE)
+    user = models.ForeignKey("app_cadastro_usuario.User", on_delete=models.CASCADE, related_name='ratings')
     body = models.TextField(blank=True)
     rating = models.FloatField(
         validators = [MinValueValidator(0.0), MaxValueValidator(5.0)]
@@ -51,3 +51,12 @@ class Rating(models.Model):
 
     def __str__(self):
         return self.body[0:50]
+
+
+class GameTFIDF(models.Model):
+    tfidf_matrix = models.BinaryField()  
+    game_index_map = models.JSONField()  
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"TF-IDF Matrix (Created: {self.created_at})"

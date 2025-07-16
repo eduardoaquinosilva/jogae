@@ -9,7 +9,8 @@ from .forms import GameForm, RatingForm
 from .recommendation_utils import (
     get_content_based_recommendations,
     get_collaborative_recommendations,
-    get_friend_based_recommendations
+    get_friend_based_recommendations,
+    get_content_based_rating
 )
 
 """ class IndexView(generic.ListView):
@@ -40,21 +41,34 @@ def indexView(request):
         all_games = Game.objects.filter(title__icontains=search_query)
         return render(request, 'games/index.html', {'popular_games': all_games[:10]})
 
+    
+    content_rating_recs, user_profile = get_content_based_rating(user, all_games, return_profile=True)
+
     content_recs = get_content_based_recommendations(user_favorites, all_games)
     collab_recs = get_collaborative_recommendations(user)
     friend_recs = get_friend_based_recommendations(user)
 
-    combined_recs = friend_recs + collab_recs + content_recs
+    # Combina todas as recomendações
+    combined_recs = content_rating_recs + content_recs + friend_recs + collab_recs
 
-    final_recommendations = []
-    seen_games = set(user_favorites)
-
-    for game in combined_recs:
-        if game not in seen_games and game not in final_recommendations:
-            final_recommendations.append(game)
+    # Retira os jogos já favoritados ou duplicados
+    filtered_recs = [game for game in combined_recs if game not in user_favorites]
+    unique_recs = []
+    seen_games = set()
+    for game in filtered_recs:
+        if game not in seen_games:
+            unique_recs.append(game)
             seen_games.add(game)
-    
-    return render(request, 'games/index.html', {'popular_games': final_recommendations[:10]})
+
+    # Se possuirmos as recomendações e o gosto do usuário, usa o filtro baseado em conteúdo
+    if unique_recs and user_profile is not None:
+        from .recommendation_utils import filter_by_similarity
+        final_recommendations = filter_by_similarity(user_profile, unique_recs)[:10]
+    else:
+        # Caso não possua, retorna os 10 primeiros elementos das recomendações
+        final_recommendations = unique_recs[:10]
+
+    return render(request, 'games/index.html', {'popular_games': final_recommendations})
 
 
 class DetailView(generic.DetailView):

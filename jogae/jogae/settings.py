@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-hs78gvh^soj&*ajigw(#d-876gsu=__=#-yl+t$*m0z!wpiaul
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Allow all hosts for development within Docker. For production, be more specific.
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -85,6 +86,7 @@ WSGI_APPLICATION = 'jogae.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
+        # Database file is in the same directory as manage.py
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -132,7 +134,8 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            # Use the service name 'redis' from docker-compose.yml
+            "hosts": [("redis", 6379)],
         },
     },
 }
@@ -140,6 +143,8 @@ CHANNEL_LAYERS = {
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 LOGIN_URL = '/cadastro_usuario/login/'
 
