@@ -1,58 +1,66 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Chat with {{ other_user.username }}{% endblock %}
+{% block title %}Chat com {{ other_user.username }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/chat/chat.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Chat with {{ other_user.username }}</h2>
-    <hr>
+<div class="chat-container">
+    <h2>Chat com {{ other_user.username }}</h2>
 
-    <div id="chat-log" class="mb-3" style="height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+    <div id="chat-log">
         {% for msg in messagesList %}
-            <div>
-                <strong>{{ msg.user.username }}:</strong> {{ msg.message }}
+            <div class="message {% if msg.user == request.user %}sender{% else %}receiver{% endif %}">
+                <strong>{{ msg.user.username }}</strong>
+                {{ msg.message }}
             </div>
         {% endfor %}
     </div>
 
-    <div class="input-group">
-        <input id="chat-message-input" type="text" class="form-control" placeholder="Type your message...">
-        <div class="input-group-append">
-            <button id="chat-message-submit" class="btn btn-primary">Send</button>
-        </div>
+    <div class="chat-input-area">
+        <input id="chat-message-input" type="text" placeholder="Digite sua mensagem...">
+        <button id="chat-message-submit">Enviar</button>
     </div>
 </div>
 
 {{ other_user.username|json_script:"other-username" }}
+{{ request.user.username|json_script:"current-username" }}
 
 <script>
     const otherUsername = JSON.parse(document.getElementById('other-username').textContent);
+    const currentUsername = JSON.parse(document.getElementById('current-username').textContent);
+
     const chatLog = document.querySelector('#chat-log');
     const messageInput = document.querySelector('#chat-message-input');
     const messageSubmit = document.querySelector('#chat-message-submit');
 
-    // Function to scroll to the bottom of the chat log
     function scrollToBottom() {
         chatLog.scrollTop = chatLog.scrollHeight;
     }
-
-    // Scroll to bottom on page load
     scrollToBottom();
 
     const chatSocket = new WebSocket(
-        'ws://'
-        + window.location.host
-        + '/ws/chat/'
-        + otherUsername
-        + '/'
+        'ws://' + window.location.host + '/ws/chat/' + otherUsername + '/'
     );
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         const messageElement = document.createElement('div');
-        messageElement.innerHTML = `<strong>${data.username}:</strong> ${data.message}`;
+        
+        // Adiciona a classe base 'message' e a classe específica 'sender' ou 'receiver'
+        messageElement.classList.add('message');
+        if (data.username === currentUsername) {
+            messageElement.classList.add('sender');
+        } else {
+            messageElement.classList.add('receiver');
+        }
+
+        messageElement.innerHTML = `<strong>${data.username}</strong> ${data.message}`;
         chatLog.appendChild(messageElement);
-        scrollToBottom(); // Scroll to bottom on new message
+        scrollToBottom();
     };
 
     chatSocket.onclose = function(e) {
@@ -62,13 +70,15 @@
     messageInput.focus();
 
     messageInput.onkeyup = function(e) {
-        if (e.key === 'Enter') {  // enter, return
+        if (e.key === 'Enter') {
             messageSubmit.click();
         }
     };
 
     messageSubmit.onclick = function(e) {
-        const message = messageInput.value;
+        const message = messageInput.value.trim();
+        if (message === '') return; // Não envia mensagens vazias
+
         chatSocket.send(JSON.stringify({
             'message': message
         }));
