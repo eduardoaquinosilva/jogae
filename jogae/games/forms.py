@@ -70,5 +70,5 @@ class RatingForm(forms.ModelForm):
         fields = ['body', 'rating']
         widgets = {
             'rating': forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'max': 5, 'step': 0.5}),
-            'body': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Leave your comment here...'}),
+            'body': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Deixe seu comentário aqui...'}),
         }

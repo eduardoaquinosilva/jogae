@@ -58,3 +58,5 @@ body {
 
 .back-link { display: inline-flex; gap: 0.5rem; justify-content: center; align-items: center; text-decoration: none; width: auto; align-self: center; border: 1px solid #ccc; background-color: rgba(26, 78, 102, 0.8); border-radius: 6px; color: white; font-weight: 600; font-size: 1rem; padding: 0.8rem 1.5rem; transition: all 0.2s; }
 .back-link:hover { background-color: rgba(185, 206, 211, 0.877); color: black; }
+
+.login-link { color: #ade8f4; text-decoration: underline; }

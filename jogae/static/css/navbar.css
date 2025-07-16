@@ -48,6 +48,7 @@
   font-weight: 500;
   font-size: 1rem;
   color: white;
+  cursor: pointer;
 }
 
 .navbar-button:hover {
@@ -59,6 +60,7 @@
   border-radius: 0.6rem;
   text-decoration: none;
   color: white;
+  cursor: pointer;
 }
 
 .navbar-link:hover {
