@@ -46,7 +46,10 @@ def games(request,pk):
         save_count=Count('savedInLibrary')
     ).order_by('-save_count')
 
-    context = {'games' : games}
+    context = {
+        'user' : user,
+        'games' : games
+    }
 
     return render(request, 'profile/games.html', context)
 
