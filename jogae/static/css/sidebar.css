@@ -1,8 +1,5 @@
-/* static/css/sidebar.css (versão corrigida) */
-
 .friends-sidebar {
     position: fixed;
-    /* MUDANÇA 1: A sidebar agora é controlada pela propriedade 'right' */
     right: 0;
     top: 5rem;
     width: 250px;
@@ -13,22 +10,21 @@
     padding: 1rem;
     z-index: 1020;
     color: #fff;
-    /* MUDANÇA 2: A transição agora anima a propriedade 'right' */
     transition: right 0.35s ease-in-out;
 }
 
-/* MUDANÇA 3: O estado recolhido agora move a sidebar para fora da tela */
+html.sidebar-is-collapsed .friends-sidebar {
+    right: -250px;
+    transition: none;
+}
+
 .friends-sidebar.collapsed {
-    /* Move a sidebar para a direita, para fora da tela.
-       O valor negativo é a largura da própria sidebar. */
     right: -250px;
 }
 
-/* O botão de controle agora funciona perfeitamente com a nova lógica */
 .sidebar-toggle {
     position: absolute;
     top: 50%;
-    /* Ele continua posicionado à esquerda da sua sidebar 'pai' */
     left: -20px;
     transform: translateY(-50%);
     width: 20px;
@@ -46,34 +42,10 @@
     justify-content: center;
     transition: background-color 0.2s;
 }
-
-.sidebar-toggle:hover {
-    background-color: rgba(91, 158, 173, 1);
-}
-
-.sidebar-content {
-    opacity: 1;
-    /* A transição agora é um pouco mais rápida */
-    transition: opacity 0.2s ease-in-out;
-}
-
-.friends-sidebar.collapsed .sidebar-content {
-    opacity: 0;
-    pointer-events: none;
-}
-
-/* --- Estilos restantes (sem alterações) --- */
-.friends-sidebar h3 {
-    margin-top: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding-bottom: 0.8rem;
-    margin-bottom: 0.8rem;
-    font-size: 1.3rem;
-    text-align: center;
-    color: #fff;
-    white-space: nowrap;
-}
-
+.sidebar-toggle:hover { background-color: rgba(91, 158, 173, 1); }
+.sidebar-content { opacity: 1; transition: opacity 0.2s ease-in-out; }
+.friends-sidebar.collapsed .sidebar-content { opacity: 0; pointer-events: none; }
+.friends-sidebar h3 { margin-top: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 0.8rem; margin-bottom: 0.8rem; font-size: 1.3rem; text-align: center; color: #fff; white-space: nowrap; }
 .friends-sidebar ul { list-style: none; padding: 0; margin: 0; }
 .friend-item { display: flex; justify-content: space-between; align-items: center; padding: 0.7rem; border-radius: 0.6rem; transition: background-color 0.2s; }
 .friend-item:hover { background-color: rgba(91, 158, 173, 0.5); }

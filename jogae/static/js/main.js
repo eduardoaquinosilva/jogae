@@ -1,22 +1,30 @@
-// static/js/main.js
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Lógica para a sidebar
     const sidebar = document.getElementById('friends-sidebar');
     const sidebarToggle = document.getElementById('sidebar-toggle');
+    const rootHtml = document.documentElement;
 
-    // Verifica se os elementos existem na página antes de adicionar o listener
     if (sidebar && sidebarToggle) {
+        
+        if (rootHtml.classList.contains('sidebar-is-collapsed')) {
+            sidebar.classList.add('collapsed');
+            sidebarToggle.innerHTML = '&laquo;';
+            sidebarToggle.title = 'Expandir Amigos';
+        }
+
         sidebarToggle.addEventListener('click', function() {
-            // Adiciona ou remove a classe 'collapsed' da sidebar
+            if (rootHtml.classList.contains('sidebar-is-collapsed')) {
+                rootHtml.classList.remove('sidebar-is-collapsed');
+            }
+            
             sidebar.classList.toggle('collapsed');
 
-            // Alterna o ícone do botão
             if (sidebar.classList.contains('collapsed')) {
-                sidebarToggle.innerHTML = '&laquo;'; // Ícone para expandir
+                localStorage.setItem('sidebarState', 'collapsed');
+                sidebarToggle.innerHTML = '&laquo;';
                 sidebarToggle.title = 'Expandir Amigos';
             } else {
-                sidebarToggle.innerHTML = '&raquo;'; // Ícone para recolher
+                localStorage.removeItem('sidebarState');
+                sidebarToggle.innerHTML = '&raquo;';
                 sidebarToggle.title = 'Recolher Amigos';
             }
         });

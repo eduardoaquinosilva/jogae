@@ -4,6 +4,13 @@
   <head>
     <meta charset="UTF-8">
     <title>{% block title %}JOGAe{% endblock %}</title>
+    
+    <script>
+      if (localStorage.getItem('sidebarState') === 'collapsed') {
+        document.documentElement.classList.add('sidebar-is-collapsed');
+      }
+    </script>
+
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
