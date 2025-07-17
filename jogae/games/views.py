@@ -29,16 +29,12 @@ def indexView(request):
     games_to_display = None
 
     if search_query:
-
         games_to_display = Game.objects.filter(title__icontains=search_query)
-    
     else:
 
         if not hasattr(user, 'favoritegamesbyuser') or not user.favoritegamesbyuser.games.exists():
-
             games_to_display = Game.objects.annotate(avg_rating=Avg('ratings__rating')).order_by("-avg_rating")
         else:
-
             user_favorites = list(user.favoritegamesbyuser.games.all())
             all_games_list = list(Game.objects.all())
             
@@ -56,6 +52,14 @@ def indexView(request):
                     final_recommendations.append(game)
                     seen_pks.add(game.pk)
             
+            if len(final_recommendations) < 10:
+                needed = 10 - len(final_recommendations)
+                filler_games = Game.objects.annotate(
+                    avg_rating=Avg('ratings__rating')
+                ).exclude(pk__in=seen_pks).order_by('-avg_rating')[:needed]
+
+                final_recommendations.extend(filler_games)
+
             games_to_display = final_recommendations
 
     if sort_param:

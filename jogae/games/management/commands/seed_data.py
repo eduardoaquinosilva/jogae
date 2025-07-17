@@ -1,6 +1,8 @@
 import random
 import os
+import uuid
 from django.conf import settings
+import csv
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.core.files import File
@@ -10,37 +12,6 @@ from app_profile.models import Friendship
 from app_biblioteca.models import FavoriteGamesByUser
 
 User = get_user_model()
-
-# Define game archetypes to create coherent data for recommendations.
-GAME_THEMES = [
-    {
-        'theme': 'Fantasy RPG',
-        'titles': ["Dragon's Fall", "The Elden Scroll", "Sorcerer's Quest", "Kingdom of Ash"],
-        'description_template': 'An epic open-world fantasy RPG where you must {action} to save the realm.',
-        'actions': ['slay ancient dragons', 'uncover a lost prophecy', 'master forbidden magic'],
-        'genres': ['RPG', 'Adventure'],
-        'tags': ['Fantasy', 'Open World', 'Singleplayer', 'Magic'],
-        'image_folder': 'fantasy'
-    },
-    {
-        'theme': 'Sci-Fi Shooter',
-        'titles': ['Galaxy at War', 'Starship Trooper', 'Cybernetic Dawn', 'Void Runner'],
-        'description_template': 'A fast-paced multiplayer shooter set in a distant future. You must {action}.',
-        'actions': ['command a powerful mech', 'fight for galactic supremacy', 'survive against alien hordes'],
-        'genres': ['Action', 'Shooter'],
-        'tags': ['Sci-Fi', 'Multiplayer', 'Co-op', 'First-Person'],
-        'image_folder': 'scifi'
-    },
-    {
-        'theme': 'Historical Strategy',
-        'titles': ['Empire Divided', 'Medieval Tactics', 'Rise of the Khanate', 'Feudal Lords'],
-        'description_template': 'A grand strategy game where you {action} to build a lasting dynasty.',
-        'actions': ['lead massive armies in historical battles', 'manage the economy of your kingdom', 'engage in complex diplomacy'],
-        'genres': ['Strategy', 'Simulation'],
-        'tags': ['Historical', 'Turn-Based', 'Singleplayer', 'Grand Strategy'],
-        'image_folder': 'strategy'
-    },
-]
 
 def get_image_files(image_folder):
     image_dir = os.path.join(settings.BASE_DIR, 'seed_images', image_folder)
@@ -75,52 +46,69 @@ class Command(BaseCommand):
             self.stdout.write(f"  Created user: {username}")
 
         # === Create Genres and Tags ===
-        self.stdout.write("Creating genres and tags...")
-        all_genre_names = set(g for theme in GAME_THEMES for g in theme['genres'])
-        all_tag_names = set(t for theme in GAME_THEMES for t in theme['tags'])
-
-        genres_db = {name: Genre.objects.create(name=name) for name in all_genre_names}
-        tags_db = {name: Tag.objects.create(name=name) for name in all_tag_names}
-
+        self.stdout.write("Creating genres...")
+        genres_db = {}
+        genre_csv_file_path = os.path.join(settings.BASE_DIR, 'games', 'data', 'genres.csv')
+        try:
+            with open(genre_csv_file_path, 'r', encoding='utf-8') as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    genre_id = row['genre_id']  # Assuming 'genre_id' column exists
+                    genre_name = row['genre']
+                    genre, created = Genre.objects.get_or_create(id=genre_id, defaults={'name': genre_name})
+                    if created:
+                        self.stdout.write(f"  Created genre: {genre_name} with ID: {genre_id}")
+                    else:
+                        self.stdout.write(f"  Genre '{genre_name}' already exists (ID: {genre_id})")
+                    genres_db[genre_name] = genre  # Store by name for easy lookup later
+        except FileNotFoundError:
+            self.stdout.write(self.style.ERROR(f"Genres CSV file not found at: {genre_csv_file_path}"))
+            return
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"Error processing genres CSV file: {e}"))
+            return
         # === Create Games ===
         self.stdout.write("Creating games...")
         games = []
-        game_titles = set()
 
-        for i in range(30): # Create 30 games
-            theme = random.choice(GAME_THEMES)
-            
-            # Ensure unique titles
-            title = random.choice(theme['titles'])
-            while title in game_titles:
-                title = f"{random.choice(theme['titles'])} {i+2}"
-            game_titles.add(title)
+        # Load data from CSV
+        csv_file_path = os.path.join(settings.BASE_DIR, 'games', 'data', 'games_data.csv')
+        try:
+            with open(csv_file_path, 'r', encoding='utf-8') as file:  # Specify encoding
+                reader = csv.DictReader(file)
+                for row in reader:
+                    title = row['name']
+                    genre_name = row['genre']
+                    description = row['summary']
+                    
+                    # Split genre string by spaces
+                    genre_names = genre_name.split()
 
-            description = theme['description_template'].format(action=random.choice(theme['actions']))
+                    game = Game.objects.create(title=title, description=description, user=random.choice(users))
 
-            game = Game.objects.create(
-                title=title,
-                description=description,
-                user=users[i % len(users)],
-            )
+                    # Add genres
+                    for name in genre_names:
+                        if name not in genres_db:
+                            genres_db[name] = Genre.objects.create(name=name)
+                        game.genres.add(genres_db[name])
 
-            # Attach a theme-appropriate image
-            image_files = get_image_files(theme['image_folder'])
-            if image_files:
-                image_name = random.choice(image_files)
-                image_path = os.path.join(settings.BASE_DIR, 'seed_images', theme['image_folder'], image_name)
-                with open(image_path, 'rb') as f:
-                    game.picture.save(image_name, File(f), save=True)
 
-            # Add genres and tags from the theme
-            game.genres.set([genres_db[name] for name in theme['genres']])
-            game.tags.set([tags_db[name] for name in theme['tags']])
-            
-            # Store the theme with the game for later use
-            game.theme_name = theme['theme']
-            games.append(game)
-            self.stdout.write(f"  Created game: {game.title} (Theme: {theme['theme']})")
 
+
+                    # Create 'PC' tag if it doesn't exist and add it
+                    pc_tag, _ = Tag.objects.get_or_create(name='PC')
+
+                    game.tags.add(pc_tag)  # Assuming 'PC' tag exists
+
+                    games.append(game)
+                    self.stdout.write(f"  Created game: {game.title}")
+        except FileNotFoundError:
+            self.stdout.write(self.style.ERROR(f"CSV file not found at: {csv_file_path}"))
+            return
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"Error processing CSV file: {e}"))
+            return
+        
         # === Create Ratings ===
         self.stdout.write("Creating ratings...")
         for game in games:
@@ -158,25 +146,16 @@ class Command(BaseCommand):
         # === Create Favorite Game Lists ===
         self.stdout.write("Creating favorite game lists...")
         for user in users:
-            # Give each user 1 or 2 preferred themes to make their tastes more realistic
-            preferred_themes = random.sample(GAME_THEMES, k=random.randint(1, 2))
-            preferred_theme_names = [t['theme'] for t in preferred_themes]
-
-            # User will favorite mostly from their preferred themes
-            preferred_games = [g for g in games if g.theme_name in preferred_theme_names]
-            other_games = [g for g in games if g.theme_name not in preferred_theme_names]
-
-            # Select 70% from preferred, 30% from others
-            total_favorites = random.randint(6, 12)
-            num_preferred = int(total_favorites * 0.7)
-            num_other = total_favorites - num_preferred
-
-            favorites_to_add = []
-            favorites_to_add.extend(random.sample(preferred_games, k=min(num_preferred, len(preferred_games))))
-            favorites_to_add.extend(random.sample(other_games, k=min(num_other, len(other_games))))
+            # Give each user a random number of favorite games from the created list
+            if not games:
+                self.stdout.write(self.style.WARNING("  No games were created, skipping favorite list creation."))
+                break
+            
+            num_favorites = random.randint(5, min(15, len(games)))
+            favorites_to_add = random.sample(games, k=num_favorites)
 
             fav_list, _ = FavoriteGamesByUser.objects.get_or_create(user=user)
             fav_list.games.set(favorites_to_add)
-            self.stdout.write(f"  Created favorites for {user.username} (Prefers: {', '.join(preferred_theme_names)})")
+            self.stdout.write(f"  Added {len(favorites_to_add)} favorite games for {user.username}")
 
         self.stdout.write(self.style.SUCCESS('Successfully seeded the database!'))
