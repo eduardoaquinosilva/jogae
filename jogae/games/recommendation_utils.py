@@ -1,180 +1,214 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import pickle
 
-from collections import defaultdict
+from django.db.models import Count, Q
+from django.contrib.auth import get_user_model
 
-from .models import Game
+from .models import Game, GameTFIDF
 from app_profile.models import Friendship
 from app_biblioteca.models import FavoriteGamesByUser
 
+User = get_user_model()
 
-def get_content_based_recommendations(user_favorite_games, all_games, num_recommendations=5):
+
+def get_content_based_recommendations(user_favorite_games, num_recommendations=5, return_profile=False):
+    
+    # Verifica se possui lista de jogos favoritos
     if not user_favorite_games:
-        return []
+        return ([], None) if return_profile else []
 
-    # Importa aqui para evitar circular imports
-    from .models import GameTFIDF 
-
-    # Tenta coletar o TFIDF pré-calculado
+    # Coleta dados da matriz TFIDF
     try:
         game_tfidf_data = GameTFIDF.objects.latest('created_at')
         tfidf_matrix = pickle.loads(game_tfidf_data.tfidf_matrix)
         game_index_map = game_tfidf_data.game_index_map
-
-        # Verifica se foi adicionado algum jogo novo
-        if not all(game.id in game_index_map for game in all_games):
-            raise GameTFIDF.DoesNotExist  # Caso tenha localizado jogo novo é necessário recalcular
     except GameTFIDF.DoesNotExist:
-        # Se não existir (primeira geração) ou for necessário recalcular
+        # Caso não tenha a matriz, retorna vazio necessário rodar
+        # 'docker-compose exec web python manage.py setup_dev_data'
+        return ([], None) if return_profile else []
 
-        # Apaga os vetores anteriores
-        GameTFIDF.objects.all().delete()
+    # Coleta ids dos jogos favoritos
+    user_favorite_ids = {str(game.id) for game in user_favorite_games}
+    # Verifica os jogos favoritos que estejam no dicionário de jogos de TFIDF
+    user_game_indices = [game_index_map[gid] for gid in user_favorite_ids if gid in game_index_map]
+    if not user_game_indices:
+        return ([], None) if return_profile else []
 
-        game_content = []
-        for game in all_games:
-            genres = ' '.join([genre.name for genre in game.genres.all()])
-            tags = ' '.join([tag.name for tag in game.tags.all()])
-            content = f"{game.title} {game.description} {genres} {tags}"
-            game_content.append(content)
-
-        tfidf = TfidfVectorizer()
-        tfidf_matrix = tfidf.fit_transform(game_content)
-
-        # Cria o mapa de indices de jogos
-        game_index_map = {str(game.id): i for i, game in enumerate(all_games)}
-
-        # Salva a matriz
-        GameTFIDF.objects.create(
-            tfidf_matrix=pickle.dumps(tfidf_matrix),
-            game_index_map=game_index_map,
-        )
-
-    # Converte os jogos favoritos do usuário para a posição na matriz
-    user_game_indices = [game_index_map[game.id] for game in user_favorite_games if game.id in game_index_map]
-    if not user_game_indices:  
-        return []
-
+    # Coleta gosto do usuário
     user_profile = np.asarray(tfidf_matrix[user_game_indices].mean(axis=0))
 
+    # Algoritmo de similaridade de coseno entre o gosto do usuário e a matriz tfidf
     cosine_similarities = cosine_similarity(user_profile, tfidf_matrix)
 
-    similar_indices = cosine_similarities.argsort().flatten()[-num_recommendations-len(user_favorite_games):-1]
+    # Soma a quantidade de jogos necessários de recomendação com 
+    # a quantidade de jogos favoritos para que tenha maior probabilidade
+    # de coletar ao menos 'num_recommendations' recomendações válidas
+    total_to_fetch = num_recommendations + len(user_favorite_games)
+    
+    # 'Ordena' retornando os índices dos jogos de menor -> maior similaridade 
+    similar_indices = cosine_similarities.argsort().flatten()[-total_to_fetch:]
 
-    recommended_games = []
+    # Matriz de jogos volta a forma de ids
+    index_to_game_id_map = {v: k for k, v in game_index_map.items()}
+    recommended_game_ids = []
+
+    # Necessário reverter pois anteriormente foi 'ordenado' de menor -> maior
     for i in reversed(similar_indices):
-        if all_games[i] not in user_favorite_games:
-            recommended_games.append(all_games[i])
-        if len(recommended_games) == num_recommendations:
+        
+        # coleta id do jogo
+        game_id = index_to_game_id_map.get(i)
+
+        # adiciona somente se o jogo não tiver nos jogos favoritos e 
+        # ao chegar no limite máximo de recomendações para o loop
+        if game_id and game_id not in user_favorite_ids:
+            recommended_game_ids.append(game_id)
+        if len(recommended_game_ids) >= num_recommendations:
             break
     
-    return recommended_games
+    # Coleta os objetos dos jogos pegos pelo ID
+    games_map = {str(g.id): g for g in Game.objects.filter(pk__in=recommended_game_ids)}
+    recommended_games = [games_map[gid] for gid in recommended_game_ids if gid in games_map]
+
+    # Retorna os jogos e o gosto do usuário ou somente os jogos
+    if return_profile:
+        return recommended_games, user_profile
+    else:
+        return recommended_games
 
 
 def get_friend_based_recommendations(user, num_recommendations=5):
+
+    # Coleta amigos do usuário
     friends = Friendship.objects.get_friends(user)
+    
+    # Se não possuir amigo não há o que recomendar
     if not friends:
         return []
 
-    friend_favorites = set()
-    for friend in friends:
-        if hasattr(friend, 'favoritegamesbyuser'):
-            friend_favorites.update(friend.favoritegamesbyuser.games.all())
+    # Coleta ids dos amigos
+    friend_ids = [f.id for f in friends]
 
-    user_favorites = set(user.favoritegamesbyuser.games.all())
-    recommendations = list(friend_favorites - user_favorites)
-
-    return list(recommendations)[:num_recommendations]
-
-
-def get_collaborative_recommendations(current_user, num_recommendationn=5):
-    similar_users = defaultdict(int)
-    current_user_favorites = set(current_user.favoritegamesbyuser.games.all())
-
-    for favorite in FavoriteGamesByUser.objects.exclude(user=current_user):
-        other_user_favorites = set(favorite.games.all())
-        common_games = current_user_favorites.intersection(other_user_favorites)
-        if common_games:
-            similar_users[favorite.user] += len(common_games)
+    # Coleta todos os jogos diferentes de todos os amigos
+    friend_favorites = Game.objects.filter(savedInLibrary__user__in=friend_ids).distinct()
     
-    recommendations = set()
-    sorted_similar_users = sorted(similar_users.items(), key=lambda item: item[1], reverse=True)
+    # Exclui jogos que já estão favoritados pelo usuário
+    user_favorite_ids = user.favoritegamesbyuser.games.values_list('id', flat=True)
+    recommendations = friend_favorites.exclude(id__in=user_favorite_ids)
 
-    for user, _ in sorted_similar_users:
-        user_favorites = set(user.favoritegamesbyuser.games.all())
-        new_recommendations = user_favorites - current_user_favorites
-        recommendations.update(new_recommendations)
-        if len(recommendations) >= num_recommendationn:
-            break
-    
-    return list(recommendations)[:num_recommendationn]
+    # Retorna recomendações
+    return list(recommendations[:num_recommendations])
 
 
-def get_content_based_rating(user, all_games, num_recommendations=5, return_profile=False):
+def get_collaborative_recommendations(current_user, num_recommendations=5):
 
-    # Importa aqui para evitar circular imports
-    from .models import GameTFIDF
+    # Verifica os jogos favoritos do usuário atual
+    try: 
+        current_user_favorite_ids = set(current_user.favoritegamesbyuser.games.values_list('id', flat=True))
+        if not current_user_favorite_ids:
+            return []
+    except FavoriteGamesByUser.DoesNotExist:
+        return []
 
-    # Tenta coletar o TFIDF pré-calculado
+
+    # Localiza usuários que possuem ao menos 1 jogo em comum com o usuário atual
+    # ordenando pela quantidade de jogos em comum
+    similar_users = User.objects.filter(
+        favoritegamesbyuser__games__id__in=current_user_favorite_ids
+    ).exclude(
+        pk=current_user.pk
+    ).annotate(
+        common_games_count=Count('favoritegamesbyuser__games', filter=Q(favoritegamesbyuser__games__id__in=current_user_favorite_ids))
+    ).order_by('-common_games_count')[:10]
+
+    # se não localizou nenhum usuário com jogo similar retorna vazio
+    if not similar_users:
+        return []
+
+    # coleta id dos usuários com jogos similares
+    similar_user_ids = [user.id for user in similar_users]
+
+    # Pega todos os jogos diferentes desses usuários, excluindo os jogos que já estão na lista de favoritos do usuário atual
+    recommended_games = Game.objects.filter( 
+        savedInLibrary__user__id__in=similar_user_ids
+    ).exclude(
+        id__in=current_user_favorite_ids
+    ).distinct()
+
+    return list(recommended_games[:num_recommendations])
+
+
+def get_content_based_rating(user, num_recommendations=5, return_profile=False):
+
+    # Coleta dados da matriz TFIDF
     try:
         game_tfidf_data = GameTFIDF.objects.latest('created_at')
         tfidf_matrix = pickle.loads(game_tfidf_data.tfidf_matrix)
         game_index_map = game_tfidf_data.game_index_map
-
-        # Verifica se foi adicionado algum jogo novo
-        if not all(game.id in game_index_map for game in all_games):
-            raise GameTFIDF.DoesNotExist  # Caso tenha localizado jogo novo é necessário recalcular
     except GameTFIDF.DoesNotExist:
-        # Se não existir (primeira geração) ou for necessário recalcular
+        # Caso não tenha a matriz, retorna vazio necessário rodar
+        # 'docker-compose exec web python manage.py setup_dev_data'
+        return ([], None) if return_profile else []
+    
+    # Coleta as maiores notas dadas pelo usuário (acima de 4.5) e pré carrega os dados do jogo
+    high_ratings = user.ratings.filter(rating__gte=4.5).select_related('game')
+    if not high_ratings:
+        return ([], None) if return_profile else []
 
-        # Apaga os vetores anteriores
-        GameTFIDF.objects.all().delete()
+    # Coleta indices dos jogos com melhor nota dada pelo usuário
+    user_game_ids = {str(rating.game.id) for rating in high_ratings}
+    user_game_indices = [game_index_map[gid] for gid in user_game_ids if gid in game_index_map]
 
-        game_content = []
-        for game in all_games:
-            genres = ' '.join([genre.name for genre in game.genres.all()])
-            tags = ' '.join([tag.name for tag in game.tags.all()])
-            content = f"{game.title} {game.description} {genres} {tags}"
-            game_content.append(content)
-
-        tfidf = TfidfVectorizer()
-        tfidf_matrix = tfidf.fit_transform(game_content)
-
-        # Cria o mapa de indices de jogos
-        game_index_map = {str(game.id): i for i, game in enumerate(all_games)}
-
-        # Salva a matriz
-        GameTFIDF.objects.create(
-            tfidf_matrix=pickle.dumps(tfidf_matrix),
-            game_index_map=game_index_map,
-        )
-
-    # Coleta os indices dos jogos com maior nota dada pelo usuário
-    user_game_indices = [
-        game_index_map.get(rating.game.id)
-        for rating in user.ratings.all()
-        if rating.game.average_rating() > 4.5 and rating.game.id in game_index_map
-    ]
     if not user_game_indices:
-        return [], None
+       return ([], None) if return_profile else []
 
-    user_profile = np.asarray(tfidf_matrix[user_game_indices].mean(axis=0)) if user_game_indices else np.zeros((1, tfidf_matrix.shape[1]))
+    # Coleta gosto do usuário
+    user_profile = np.asarray(tfidf_matrix[user_game_indices].mean(axis=0))
+    
+    # Exclui jogos que o usuário já favoritou
+    try:
+        user_favorite_ids = set(str(g.id) for g in user.favoritegamesbyuser.games.all())
+    except FavoriteGamesByUser.DoesNotExist:
+        user_favorite_ids = set()
 
+
+    # Algoritmo de similaridade de coseno entre o gosto do usuário e a matriz tfidf
     cosine_similarities = cosine_similarity(user_profile, tfidf_matrix)
 
-    user_favorites = set(user.favoritegamesbyuser.games.all())
+    # Soma a quantidade de jogos necessários de recomendação com 
+    # a quantidade de jogos favoritos e já com nota dada 
+    # para que tenha maior probabilidade de coletar ao menos 
+    # 'num_recommendations' recomendações válidas
+    excluded_ids = user_favorite_ids.union(user_game_ids)
+    total_to_fetch = num_recommendations + len(excluded_ids)
 
-    similar_indices = cosine_similarities.argsort().flatten()[-num_recommendations-len(user_favorites):-1]
+    # 'Ordena' retornando os índices dos jogos de menor -> maior similaridade 
+    similar_indices = cosine_similarities.argsort().flatten()[-total_to_fetch:]
 
-    recommended_games = []
+
+    # Matriz de jogos volta a forma de ids
+    index_to_game_id_map = {v: k for k, v in game_index_map.items()}
+    recommended_game_ids = []
+
+    # Necessário reverter pois anteriormente foi 'ordenado' de menor -> maior
     for i in reversed(similar_indices):
-        
-        if all_games[i] not in user_favorites:
-            recommended_games.append(all_games[i])
-        if len(recommended_games) == num_recommendations:
+
+        # coleta id do jogo
+        game_id = index_to_game_id_map.get(i)
+
+        # adiciona somente se o jogo não tiver nos jogos favoritos e 
+        # ao chegar no limite máximo de recomendações para o loop
+        if game_id and game_id not in excluded_ids:
+            recommended_game_ids.append(game_id)
+        if len(recommended_game_ids) >= num_recommendations:
             break
     
+
+    # Coleta os objetos dos jogos pegos pelo ID
+    games_map = {str(g.id): g for g in Game.objects.filter(pk__in=recommended_game_ids)}
+    recommended_games = [games_map[gid] for gid in recommended_game_ids if gid in games_map]
+
+    # Retorna os jogos e o gosto do usuário ou somente os jogos
     if return_profile:
         return recommended_games, user_profile
     else:
@@ -182,34 +216,48 @@ def get_content_based_rating(user, all_games, num_recommendations=5, return_prof
     
 
 def filter_by_similarity(user_profile, games, num_recommendations=10):
-    
-    # Importa aqui para evitar circular import
-    from .models import GameTFIDF
 
+    # Se não foi passado jogo ou não possui o gosto do usuário
+    # retorna vazio
+    if user_profile is None or not games:
+        return [(game, None) for game in games[:num_recommendations]]
+
+    # Coleta dados da matriz TFIDF
     try:
-        # Tenta pegar o último TDFIDF gerado
         game_tfidf_data = GameTFIDF.objects.latest('created_at')
         tfidf_matrix = pickle.loads(game_tfidf_data.tfidf_matrix)
         game_index_map = game_tfidf_data.game_index_map
-
-        # Mapeia os índices dos jogos
-        game_indices = [game_index_map[str(game.id)] for game in games if str(game.id) in game_index_map]
-        if not game_indices:
-            return []
     except GameTFIDF.DoesNotExist:
-        # Caso não exista somente retorna os primeiros num_recommendations elementos de games
-        return games[:num_recommendations]
+        # Sem matriz não é possível ordenar por similaridade, retorna a lista
+        # truncada com a quantidade de dados passados
+        return [(game, None) for game in games[:num_recommendations]]
 
-    # Filtra a matrix para usar somente os jogos que estão sendo considerados
+    # Pega os ids dos jogos considerados na matriz de jogos
+    game_ids_in_list = {str(g.id) for g in games}
+    game_indices = [game_index_map[gid] for gid in game_ids_in_list if gid in game_index_map]
+    if not game_indices:
+        return []
+
+    # Coleta a posição do jogo na matriz TF-IDF
+    index_to_game_map = {game_index_map[str(g.id)]: g for g in games if str(g.id) in game_index_map}
+
+    # Filtra a matriz TFIDF somente com os jogos que serão
+    # verificado seu índice de similaridade
     filtered_tfidf_matrix = tfidf_matrix[game_indices]
 
-    # Calcula a similaridade por coseno entre o gosto do usuário e o conteúdo dos jogos
+    # Calcula índice de similaridade somente com os jogos de interesse
     cosine_similarities = cosine_similarity(user_profile, filtered_tfidf_matrix)
+    scores = cosine_similarities[0]
 
-    # Os jogos são separados de acordo com a similaridade 
-    similar_indices = cosine_similarities.argsort().flatten()[::-1]
+    # 'Ordena' retornando os índices dos jogos de menor -> maior similaridade
+    sorted_local_indices = cosine_similarities.argsort().flatten()[::-1]
 
-    # Retorna o map para a ordem original
-    games_by_similarity = [games[game_indices.index(game_index_map[str(games[i].id)])] for i in similar_indices if str(games[i].id) in game_index_map]
+    # Coleta indices e adiciona os objetos do jogo e o score dele a 'sorted_games_with_scores' para retornar 
+    sorted_games_with_scores = []
+    for local_idx in sorted_local_indices:
+        global_matrix_idx = game_indices[local_idx]
+        game = index_to_game_map[global_matrix_idx]
+        score = scores[local_idx]
+        sorted_games_with_scores.append((game, score))
 
-    return games_by_similarity[:num_recommendations]
+    return sorted_games_with_scores[:num_recommendations]
